@@ -1,0 +1,700 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Krater</title>
+<meta name="theme-color" content="#121A28">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Krater">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>
+@font-face{font-family:"Bricolage Grotesque";src:url("fonts/bricolage.woff2") format("woff2");font-weight:200 800;font-display:swap}
+:root{
+  --bg:#121A28; --surface:#1C2637; --surface2:#243147; --line:#2F3D55;
+  --ink:#FFFFFF; --muted:#A9B4C6; --accent:#3D6BE0;
+  --challenge:#2A4C8F; --duel:#4A5568; --vote:#1D5A7C; --everyone:#3A3F72; --rule:#25595E; --end:#1A2333;
+  color-scheme:dark;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Bricolage Grotesque",ui-rounded,system-ui,-apple-system,"Segoe UI",sans-serif;
+  font-size:17px;line-height:1.45;-webkit-tap-highlight-color:transparent}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid #8FB0FF;outline-offset:2px}
+
+.wrap{max-width:540px;margin:0 auto;padding:22px 18px 56px}
+.top{display:flex;justify-content:flex-end}
+.lang{border:2px solid var(--line);background:transparent;border-radius:999px;padding:6px 14px;font-weight:600;cursor:pointer;color:var(--muted)}
+.logo{font-weight:800;font-size:clamp(3.4rem,17vw,5rem);line-height:.9;letter-spacing:-.05em;margin:10px 0 32px}
+.tag{color:var(--muted);margin:10px 0 28px}
+
+section{margin-bottom:28px}
+h2{font-size:1.25rem;font-weight:800;letter-spacing:-.02em;margin:0 0 10px}
+.hint{color:var(--muted);font-size:.9rem;margin:8px 0 0}
+
+.row{display:flex;gap:8px}
+input[type=text],textarea,select{width:100%;background:var(--surface);border:2px solid var(--line);border-radius:14px;padding:12px 14px}
+textarea{resize:vertical;min-height:84px}
+input:focus,textarea:focus,select:focus{border-color:var(--ink);outline:none}
+::placeholder{color:#6F7C92}
+
+.btn{border:0;border-radius:14px;padding:12px 18px;font-weight:600;cursor:pointer;background:var(--surface2);color:var(--ink);white-space:nowrap}
+.btn.ghost{background:transparent;border:2px solid var(--line)}
+.btn.big{width:100%;padding:18px;font-size:1.3rem;font-weight:800;background:var(--accent);border-radius:20px;box-shadow:0 6px 0 #22408F}
+.btn.big:active{transform:translateY(4px);box-shadow:0 2px 0 #22408F}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+
+.where{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.where button{border:2px solid var(--line);background:var(--surface);border-radius:18px;padding:18px 12px;font-weight:800;font-size:1.15rem;cursor:pointer;text-align:left;line-height:1.15}
+.where button[aria-pressed=true]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:6px 6px 6px 14px;font-weight:600}
+.chip button{border:0;background:var(--line);width:26px;height:26px;border-radius:50%;cursor:pointer;line-height:1}
+
+.seg{display:flex;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:4px;gap:4px}
+.seg button{flex:1;border:0;background:transparent;padding:10px 6px;border-radius:12px;font-weight:600;cursor:pointer;color:var(--muted)}
+.seg button[aria-pressed=true]{background:var(--surface2);color:var(--ink)}
+
+.packs{display:grid;gap:8px}
+.pack{display:flex;align-items:center;gap:12px;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:12px 14px;cursor:pointer}
+.pack input{width:22px;height:22px;accent-color:var(--accent)}
+.pack b{display:block}
+.pack small{color:var(--muted)}
+
+details{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:4px 16px;margin-bottom:12px}
+summary{cursor:pointer;font-weight:800;padding:12px 0;list-style:none;display:flex;justify-content:space-between}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";font-size:1.3rem;line-height:1}
+details[open] summary::after{content:"–"}
+.list{list-style:none;padding:0;margin:12px 0}
+.list li{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
+.list li span{flex:1}
+.list small{display:block;color:var(--muted)}
+.list .del{border:0;background:none;color:var(--muted);cursor:pointer;font-size:1.1rem;padding:0 4px}
+.dot{width:12px;height:12px;border-radius:50%;margin-top:6px;flex:none;border:1px solid #ffffff55}
+.stack{display:grid;gap:8px;padding-bottom:14px}
+code{background:var(--bg);padding:1px 6px;border-radius:6px;font-size:.88em}
+.empty{color:var(--muted);font-size:.95rem}
+
+.split{display:grid;gap:8px;padding-top:14px;border-top:1px solid var(--line)}
+.btn.primary{background:var(--accent)}
+dialog{background:var(--surface);color:var(--ink);border:2px solid var(--line);border-radius:22px;padding:22px;width:min(92vw,440px)}
+dialog::backdrop{background:#05080FCC}
+dialog h3{margin:0 0 8px;font-size:1.35rem;font-weight:800;letter-spacing:-.02em}
+dialog p{margin:0 0 16px;color:var(--muted)}
+dialog textarea{min-height:110px;font-size:.85rem;margin-bottom:14px;word-break:break-all}
+.dlgbtns{display:flex;gap:8px;justify-content:flex-end}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);transform:translate(-50%,20px);opacity:0;
+  background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:14px;font-weight:600;pointer-events:none;transition:.25s;z-index:20;max-width:90vw}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+#game{position:fixed;inset:0;display:none;flex-direction:column;
+  padding:calc(env(safe-area-inset-top,0px) + 14px) 18px calc(env(safe-area-inset-bottom,0px) + 18px);
+  background:var(--c);color:#fff;transition:background .35s ease}
+#game.on{display:flex}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.bar button{border:2px solid #ffffff99;background:transparent;color:inherit;border-radius:999px;padding:8px 14px;font-weight:600;cursor:pointer}
+.count{font-weight:600;opacity:.75}
+.card{flex:1;display:flex;flex-direction:column;justify-content:center;max-width:620px;width:100%;margin:0 auto;cursor:pointer;user-select:none}
+.kind{font-weight:800;font-size:1.1rem;opacity:.75;margin-bottom:14px}
+.text{font-weight:800;font-size:clamp(1.8rem,7.5vw,3rem);line-height:1.08;letter-spacing:-.025em;margin:0}
+.tap{text-align:center;opacity:.6;font-size:.95rem}
+.card.flip{animation:flip .28s ease}
+@keyframes flip{from{opacity:0;transform:translateY(14px) rotate(-1.5deg)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.card.flip{animation:none}#game{transition:none}}
+.endbtns{display:grid;gap:10px;margin-top:28px}
+.endbtns button{border:0;border-radius:16px;padding:16px;font-weight:800;font-size:1.1rem;cursor:pointer;background:#fff;color:var(--bg)}
+.endbtns button.alt{background:transparent;color:#fff;border:2px solid #fff}
+</style>
+</head>
+<body>
+<main class="wrap" id="setup">
+  <div class="top"><button class="lang" id="lang"></button></div>
+  <h1 class="logo">Krater</h1>
+
+  <section>
+    <h2 data-t="whereH"></h2>
+    <div class="where" id="where">
+      <button data-v="soos">Soos</button>
+      <button data-v="thuis">Niet op de soos</button>
+    </div>
+    <p class="hint" id="wherehint"></p>
+  </section>
+
+  <section>
+    <h2 data-t="players"></h2>
+    <div class="row">
+      <input type="text" id="pname" data-ph="addName" maxlength="20" autocomplete="off">
+      <button class="btn" id="padd" data-t="add"></button>
+    </div>
+    <div class="chips" id="players"></div>
+    <p class="hint" id="phint" data-t="phint"></p>
+  </section>
+
+  <section>
+    <h2 data-t="decks"></h2>
+    <div class="packs" id="packs"></div>
+  </section>
+
+  <section>
+    <h2 data-t="punishH"></h2>
+    <div class="seg" id="pun">
+      <button data-v="sips" data-t="sips"></button>
+      <button data-v="dares" data-t="dares"></button>
+      <button data-v="mix" data-t="mix"></button>
+    </div>
+    <p class="hint" id="punhint"></p>
+  </section>
+
+  <section>
+    <h2 data-t="lengthH"></h2>
+    <div class="seg" id="len">
+      <button data-v="20" data-t="short"></button>
+      <button data-v="40" data-t="normal"></button>
+      <button data-v="70" data-t="long"></button>
+    </div>
+  </section>
+
+  <section>
+    <button class="btn big" id="start" data-t="start"></button>
+  </section>
+
+  <section>
+    <h2 data-t="makeH"></h2>
+    <details>
+      <summary><span><span data-t="myCards"></span> <span id="ccount"></span></span></summary>
+      <div class="stack">
+        <select id="ctype">
+          <option value="challenge" data-t="optChallenge"></option>
+          <option value="duel" data-t="optDuel"></option>
+          <option value="vote" data-t="optVote"></option>
+          <option value="everyone" data-t="optEveryone"></option>
+          <option value="rule" data-t="optRule"></option>
+        </select>
+        <select id="cwhere">
+          <option value="both" data-t="bothModes"></option>
+          <option value="soos" data-t="soosOnly"></option>
+          <option value="thuis" data-t="thuisOnly"></option>
+        </select>
+        <textarea id="ctext" data-ph="ctextPh"></textarea>
+        <input type="text" id="cend" data-ph="cendPh" hidden>
+        <button class="btn" id="cadd" data-t="addCard"></button>
+        <p class="hint" data-t="placeholders" data-html="1"></p>
+      </div>
+      <ul class="list" id="clist"></ul>
+    </details>
+
+    <details>
+      <summary><span><span data-t="myDares"></span> <span id="dcount"></span></span></summary>
+      <div class="stack">
+        <div class="row">
+          <input type="text" id="dtext" data-ph="dtextPh" maxlength="140">
+          <button class="btn" id="dadd" data-t="add"></button>
+        </div>
+        <p class="hint" data-t="dhint"></p>
+      </div>
+      <ul class="list" id="dlist"></ul>
+      <div class="stack"><button class="btn ghost" id="dreset" data-t="dreset"></button></div>
+    </details>
+
+    <details>
+      <summary><span data-t="shareH"></span></summary>
+      <div class="stack">
+        <p class="hint" data-t="shareIntro" style="margin-top:0"></p>
+        <input type="text" id="deckname" data-ph="deckNamePh" maxlength="40">
+        <button class="btn primary" id="share" data-t="shareBtn"></button>
+        <div class="split">
+          <b data-t="importH"></b>
+          <div class="row">
+            <input type="text" id="importcode" data-ph="importPh" autocomplete="off">
+            <button class="btn" id="importbtn" data-t="importBtn"></button>
+          </div>
+        </div>
+      </div>
+    </details>
+  </section>
+</main>
+
+<dialog id="dlg">
+  <h3 id="dlgTitle"></h3>
+  <p id="dlgText"></p>
+  <textarea id="dlgLink" readonly hidden></textarea>
+  <div class="dlgbtns">
+    <button class="btn ghost" id="dlgNo"></button>
+    <button class="btn primary" id="dlgYes"></button>
+  </div>
+</dialog>
+<div class="toast" id="toast" role="status"></div>
+
+<div id="game" role="dialog" aria-label="Krater">
+  <div class="bar">
+    <button id="quit" data-t="quit"></button>
+    <span class="count" id="count"></span>
+    <button id="back" data-t="back"></button>
+  </div>
+  <div class="card" id="card" tabindex="0" aria-live="polite">
+    <div class="kind" id="kind"></div>
+    <p class="text" id="text"></p>
+    <div class="endbtns" id="endbtns" hidden>
+      <button id="again" data-t="again"></button>
+      <button class="alt" id="tosetup" data-t="toSetup"></button>
+    </div>
+  </div>
+  <p class="tap" id="tap" data-t="tap"></p>
+</div>
+
+<script>
+/* ---------- text ---------- */
+const T = {
+  nl: {
+    tag:'Geef de telefoon door, lees de kaart, doe wat er staat.',
+    whereH:'Waar spelen jullie?',
+    whereHint_soos:'Met extra kaarten voor op de soos.',
+    whereHint_thuis:'Met extra kaarten voor thuis of ergens anders.',
+    players:'Spelers', addName:'Voeg een naam toe', add:'Toevoegen', phint:'Voeg minstens 2 spelers toe.',
+    decks:'Decks', punishH:'Straffen', sips:'Slokken', dares:'Opdrachten', mix:'Mix',
+    punHint_sips:'Straffen zijn slokken. Water telt ook.',
+    punHint_dares:'Straffen komen uit je lijst met opdrachten.',
+    punHint_mix:'Half slokken, half opdrachten.',
+    lengthH:'Lengte', short:'Kort', normal:'Normaal', long:'Lang', start:'Start spel',
+    makeH:'Maak het je eigen', myCards:'Mijn kaarten',
+    optChallenge:'Opdracht: één speler', optDuel:'Duel: twee spelers tegen elkaar',
+    optVote:'Stemmen: de groep wijst iemand aan', optEveryone:'Iedereen: geldt voor de hele groep',
+    optRule:'Regel: duurt een paar kaarten',
+    bothModes:'Beide modi', soosOnly:'Alleen Soos', thuisOnly:'Alleen Niet op de soos',
+    ctextPh:'{p1}, doe 10 seconden een robotdans, anders moet je {punish}.',
+    cendPh:'Als de regel stopt, bijv. {p1} hoeft geen robot meer te zijn.',
+    addCard:'Kaart toevoegen',
+    placeholders:'Gebruik <code>{p1}</code> <code>{p2}</code> <code>{p3}</code> voor willekeurige spelers, <code>{punish}</code> voor een straf en <code>{n}</code> voor een getal van 1 tot 4. Zet <code>{punish}</code> na „moet”, zoals: De verliezer moet {punish}.',
+    emptyCards:'Nog geen kaarten. Je eerste maak je hierboven.',
+    myDares:'Mijn opdrachten', dtextPh:'15 jumping jacks doen',
+    dhint:'Schrijf opdrachten zo dat ze de zin „De verliezer moet …” afmaken.',
+    emptyDares:'Geen opdrachten. De opdrachten-modus gebruikt dan slokken.',
+    dreset:'Standaardopdrachten terugzetten',
+    customName:'Mijn kaarten', customDesc:n=>`${n} zelfgemaakte kaart${n===1?'':'en'}`, customEmpty:'Maak hieronder je eigen kaarten',
+    cardsCount:n=>`${n} kaarten`,
+    quit:'Stoppen', back:'Terug', tap:'Tik voor de volgende kaart',
+    over:'Klaar', overText:'Dat was het hele deck. Nog een keer?', again:'Opnieuw spelen', toSetup:'Instellingen aanpassen',
+    confirmQuit:'Dit spel stoppen?', noDeck:'Kies minstens één deck met kaarten.',
+    shareH:'Deck delen', shareIntro:'Stuur je kaarten en opdrachten naar vrienden. Zij openen de link en kunnen alles aan hun eigen Krater toevoegen.',
+    deckNamePh:'Naam van je deck (optioneel)', shareBtn:'Deck delen', defaultDeckName:'Mijn Krater-deck',
+    importH:'Deck van een vriend', importPh:'Plak de link of code', importBtn:'Importeren',
+    shareText:n=>`Speel mijn Krater-deck „${n}”:`, nothingToShare:'Maak eerst een kaart of opdracht, dan kun je delen.',
+    copyTitle:'Kopieer deze link', copyText:'Stuur hem naar je vrienden, bijvoorbeeld via WhatsApp.', copy:'Kopiëren', close:'Sluiten', copied:'Link gekopieerd.',
+    importTitle:n=>`„${n}” toevoegen?`,
+    importSummary:(c,d)=>`${c} kaart${c===1?'':'en'} en ${d} opdracht${d===1?'':'en'}. Wat je al hebt, wordt overgeslagen.`,
+    addDeck:'Toevoegen', cancel:'Annuleren',
+    added:(c,d)=>`${c} kaart${c===1?'':'en'} en ${d} opdracht${d===1?'':'en'} toegevoegd.`,
+    badDeck:'Deze link of code werkt niet. Vraag je vriend om het deck opnieuw te delen.',
+    other:'English',
+    sip:n=> n===1 ? '1 slok nemen' : `${n} slokken nemen`,
+    labels:{challenge:'Opdracht', duel:'Duel', vote:'Stemmen', everyone:'Iedereen', rule:'Nieuwe regel', end:'Regel voorbij'},
+    where:{both:'Beide modi', soos:'Soos', thuis:'Niet op de soos'}
+  },
+  en: {
+    tag:'Pass the phone, read the card, do the thing.',
+    whereH:'Where are you playing?',
+    whereHint_soos:'Includes extra cards for the soos.',
+    whereHint_thuis:'Includes extra cards for home or anywhere else.',
+    players:'Players', addName:'Add a name', add:'Add', phint:'Add at least 2 players.',
+    decks:'Decks', punishH:'Punishments', sips:'Sips', dares:'Dares', mix:'Mix',
+    punHint_sips:'Punishments are sips. Water counts too.',
+    punHint_dares:'Punishments come from your dare list.',
+    punHint_mix:'Half sips, half dares.',
+    lengthH:'Game length', short:'Short', normal:'Normal', long:'Long', start:'Start game',
+    makeH:'Make it yours', myCards:'My cards',
+    optChallenge:'Challenge: one player', optDuel:'Duel: two players face off',
+    optVote:'Vote: group points at someone', optEveryone:'Everyone: applies to the whole group',
+    optRule:'Rule: lasts a few cards',
+    bothModes:'Both modes', soosOnly:'Soos only', thuisOnly:'Niet op de soos only',
+    ctextPh:'{p1}, do a robot dance for 10 seconds, or you have to {punish}.',
+    cendPh:'When the rule ends, e.g. {p1} can stop being a robot.',
+    addCard:'Add card',
+    placeholders:'Use <code>{p1}</code> <code>{p2}</code> <code>{p3}</code> for random players, <code>{punish}</code> for a punishment, and <code>{n}</code> for a number from 1 to 4. Put <code>{punish}</code> after “has to”, like: Loser has to {punish}.',
+    emptyCards:'No cards yet. Your first one goes above.',
+    myDares:'My dares', dtextPh:'do 15 jumping jacks',
+    dhint:'Write dares so they finish the sentence “Loser has to …”',
+    emptyDares:'No dares. Dare mode will fall back to sips.',
+    dreset:'Restore default dares',
+    customName:'My cards', customDesc:n=>`${n} card${n===1?'':'s'} you made`, customEmpty:'Make your own below',
+    cardsCount:n=>`${n} cards`,
+    quit:'Quit', back:'Back', tap:'Tap for the next card',
+    over:'Game over', overText:'That’s the whole deck. Same again?', again:'Play again', toSetup:'Change settings',
+    confirmQuit:'Quit this game?', noDeck:'Pick at least one deck that has cards in it.',
+    shareH:'Share deck', shareIntro:'Send your cards and dares to friends. They open the link and can add everything to their own Krater.',
+    deckNamePh:'Deck name (optional)', shareBtn:'Share deck', defaultDeckName:'My Krater deck',
+    importH:'Deck from a friend', importPh:'Paste the link or code', importBtn:'Import',
+    shareText:n=>`Play my Krater deck “${n}”:`, nothingToShare:'Make a card or dare first, then you can share.',
+    copyTitle:'Copy this link', copyText:'Send it to your friends, for example on WhatsApp.', copy:'Copy', close:'Close', copied:'Link copied.',
+    importTitle:n=>`Add “${n}”?`,
+    importSummary:(c,d)=>`${c} card${c===1?'':'s'} and ${d} dare${d===1?'':'s'}. Anything you already have is skipped.`,
+    addDeck:'Add', cancel:'Cancel',
+    added:(c,d)=>`Added ${c} card${c===1?'':'s'} and ${d} dare${d===1?'':'s'}.`,
+    badDeck:'This link or code doesn’t work. Ask your friend to share the deck again.',
+    other:'Nederlands',
+    sip:n=> `take ${n} sip${n===1?'':'s'}`,
+    labels:{challenge:'Challenge', duel:'Duel', vote:'Vote', everyone:'Everyone', rule:'New rule', end:'Rule over'},
+    where:{both:'Both modes', soos:'Soos', thuis:'Niet op de soos'}
+  }
+};
+
+/* ---------- cards: [type, mode, [nl, nlEnd], [en, enEnd]] ---------- */
+const C = (type, nl, en) => ({type, nl, en});
+const PACKS = {
+  warmup: { name:{nl:'Warm-up', en:'Warm-up'}, desc:{nl:'Makkelijke kaarten om op gang te komen', en:'Easy cards to get everyone going'}, cards:[
+    C('challenge',['{p1}, noem 5 fruitsoorten in 10 seconden. Lukt het niet? Dan moet je {punish}.'],['{p1}, name 5 fruits in 10 seconds. Fail and you have to {punish}.']),
+    C('challenge',['{p1}, zeg het alfabet achterstevoren vanaf de M. Eén fout en je moet {punish}.'],['{p1}, say the alphabet backwards from M. One mistake and you have to {punish}.']),
+    C('challenge',['{p1}, laat je meest nutteloze talent zien. Is niemand onder de indruk? Dan moet je {punish}.'],['{p1}, show us your most useless talent. If nobody’s impressed, you have to {punish}.']),
+    C('challenge',['{p1}, beschrijf {p2} in drie woorden. Is {p2} het er niet mee eens? Dan moet {p1} {punish}.'],['{p1}, describe {p2} in three words. If {p2} doesn’t like them, {p1} has to {punish}.']),
+    C('challenge',['{p1}, laat de laatste foto op je camerarol zien, anders moet je {punish}.'],['{p1}, show the last photo in your camera roll, or you have to {punish}.']),
+    C('challenge',['{p1}, je hebt 15 seconden om {p2} aan het lachen te maken. Lukt het niet? Dan moet je {punish}.'],['{p1}, you have 15 seconds to make {p2} laugh. Fail and you have to {punish}.']),
+    C('duel',['{p1} tegen {p2}: steen, papier, schaar. De verliezer moet {punish}.'],['{p1} vs {p2}: rock, paper, scissors. Loser has to {punish}.']),
+    C('duel',['{p1} tegen {p2}: staarwedstrijd. Wie het eerst knippert, moet {punish}.'],['{p1} vs {p2}: staring contest. First to blink has to {punish}.']),
+    C('duel',['{p1} tegen {p2}: noem om de beurt automerken. Wie het eerst twijfelt, moet {punish}.'],['{p1} vs {p2}: take turns naming car brands. First to hesitate has to {punish}.']),
+    C('duel',['{p1} tegen {p2}: duimworstelen. De verliezer moet {punish}.'],['{p1} vs {p2}: thumb war. Loser has to {punish}.']),
+    C('vote',['Wijs op drie naar wie het eerst verdwaalt in zijn eigen stad. Wie de meeste vingers krijgt, moet {punish}.'],['On three, point at who’s most likely to get lost in their own city. Most fingers has to {punish}.']),
+    C('vote',['Wie wordt per ongeluk beroemd? Wie de meeste stemmen krijgt, moet {punish}.'],['Who’s most likely to become famous by accident? Most votes has to {punish}.']),
+    C('vote',['Wie overleeft het kortst in een zombie-apocalyps? Wie de meeste stemmen krijgt, moet {punish}.'],['Who’d survive the shortest in a zombie apocalypse? Most votes has to {punish}.']),
+    C('everyone',['Wie als laatste zijn neus aanraakt, moet {punish}.'],['Last person to touch their nose has to {punish}.']),
+    C('everyone',['Iedereen die iets zwarts draagt, moet {punish}.'],['Everyone wearing something black has to {punish}.']),
+    C('everyone',['Ik ben nog nooit in slaap gevallen tijdens een college. Iedereen die dat wel is, moet {punish}.'],['Never have I ever fallen asleep in a lecture. Everyone who has must {punish}.']),
+    C('everyone',['De jongste speler kiest iemand. Die moet {punish}.'],['The youngest player picks someone. That person has to {punish}.']),
+    C('rule',['Niemand mag ‘ja’ of ‘nee’ zeggen. Wie het toch zegt, moet {punish}.','Je mag weer ja en nee zeggen.'],['Nobody may say “yes” or “no”. Slip up and you have to {punish}.','You may say yes and no again.']),
+    C('rule',['{p1} is de Vragenmeester. Wie antwoord geeft op een vraag van {p1}, moet {punish}.','{p1} is geen Vragenmeester meer.'],['{p1} is the Question Master. Anyone who answers their question has to {punish}.','{p1} is no longer the Question Master.']),
+    C('rule',['Iedereen praat als een piraat. Wie het vergeet, moet {punish}.','De piraten mogen rusten. Praat weer normaal.'],['Everyone talks like a pirate. Forget and you have to {punish}.','The pirates may rest. Normal voices again.'])
+  ]},
+  wild: { name:{nl:'Wild', en:'Wild'}, desc:{nl:'Persoonlijker, meer chaos', en:'More personal, more chaos'}, cards:[
+    C('challenge',['{p1}, lees je laatst verstuurde bericht hardop voor, anders moet je {punish}.'],['{p1}, read your last sent text out loud, or you have to {punish}.']),
+    C('challenge',['{p1}, vertel je gênantste zoekopdracht van deze week, anders moet je {punish}.'],['{p1}, reveal your most embarrassing search of the week, or you have to {punish}.']),
+    C('challenge',['{p1}, doe je beste imitatie van {p2}. Is de groep niet overtuigd? Dan moet je {punish}.'],['{p1}, do your best impression of {p2}. If the group isn’t convinced, you have to {punish}.']),
+    C('challenge',['Hot seat: iedereen mag {p1} één vraag stellen. Voor elke ontweken vraag moet {p1} {punish}.'],['Hot seat: everyone may ask {p1} one question. For every question dodged, {p1} has to {punish}.']),
+    C('challenge',['{p1}, geef {p2} een compliment dat klinkt als een belediging. Lacht niemand? Dan moet je {punish}.'],['{p1}, give {p2} a compliment that sounds like an insult. If nobody laughs, you have to {punish}.']),
+    C('duel',['{p1} tegen {p2}: armworstelen. De verliezer moet {punish}.'],['{p1} vs {p2}: arm wrestle. Loser has to {punish}.']),
+    C('duel',['{p1} tegen {p2}: de groep stelt jullie dezelfde vraag over {p3}. Wie {p3} het slechtst kent, moet {punish}.'],['{p1} vs {p2}: the group asks you both the same question about {p3}. Whoever knows {p3} less has to {punish}.']),
+    C('vote',['Wie zou de slechtste huisgenoot zijn? Wie de meeste stemmen krijgt, moet {punish}.'],['Who’d be the worst roommate? Most votes has to {punish}.']),
+    C('vote',['Wie appt vanavond als eerste zijn ex? Wie de meeste stemmen krijgt, moet {punish}.'],['Who’s most likely to text their ex tonight? Most votes has to {punish}.']),
+    C('everyone',['Iedereen laat zijn schermtijd van vandaag zien. De hoogste moet {punish}.'],['Everyone shows their screen time for today. The highest has to {punish}.']),
+    C('everyone',['Iedereen die weleens iemand heeft geghost, moet {punish}.'],['Everyone who has ever ghosted someone has to {punish}.']),
+    C('rule',['{p1} en {p2} zijn nu een tweeling: krijgt de een een straf, dan krijgt de ander die ook.','{p1} en {p2} zijn geen tweeling meer.'],['{p1} and {p2} are twins: whenever one gets a punishment, so does the other.','{p1} and {p2} are no longer twins.']),
+    C('rule',['{p1} moet blijven staan tot deze regel voorbij is. Eerder gaan zitten? Dan moet je {punish}.','{p1} mag weer zitten.'],['{p1} has to stay standing until this rule ends. Sit down early and you have to {punish}.','{p1} may sit down again.'])
+  ]}
+};
+
+/* extra cards per game mode, always mixed in */
+const MODE_CARDS = {
+  soos: [
+    C('challenge',['{p1}, ga naar de bar en bestel iets met een zelfverzonnen accent. Lach je? Dan moet je {punish}.'],['{p1}, go to the bar and order something in a made-up accent. If you laugh, you have to {punish}.']),
+    C('challenge',['{p1}, proost met iemand die niet meedoet en kom terug met diens naam, anders moet je {punish}.'],['{p1}, toast with someone who isn’t playing and come back with their name, or you have to {punish}.']),
+    C('challenge',['{p1}, laat iemand die niet meedoet een opdracht voor je verzinnen, anders moet je {punish}.'],['{p1}, let someone who isn’t playing make up a challenge for you, or you have to {punish}.']),
+    C('challenge',['{p1}, vraag aan de bar om een nummer dat {p2} kiest, anders moet je {punish}.'],['{p1}, ask the bar to play a song {p2} picks, or you have to {punish}.']),
+    C('duel',['{p1} tegen {p2}: wie krijgt als eerste een ander groepje aan het lachen? De verliezer moet {punish}.'],['{p1} vs {p2}: who makes another group laugh first? Loser has to {punish}.']),
+    C('vote',['Wie gaat vanavond als laatste weg van de soos? Wie de meeste stemmen krijgt, moet {punish}.'],['Who’ll be the last to leave the soos tonight? Most votes has to {punish}.']),
+    C('everyone',['Iedereen die vanavond nog geen rondje heeft gegeven, moet {punish}.'],['Everyone who hasn’t bought a round tonight has to {punish}.']),
+    C('rule',['{p1} haalt alle drankjes voor de groep. Wie zelf iets haalt, moet {punish}.','{p1} hoeft niet meer alles te halen.'],['{p1} fetches every drink for the group. Anyone who gets their own has to {punish}.','{p1} no longer has to fetch everything.'])
+  ],
+  thuis: [
+    C('challenge',['{p1}, kies het volgende nummer. Vindt de groep het slecht? Dan moet je {punish}.'],['{p1}, pick the next song. If the group hates it, you have to {punish}.']),
+    C('challenge',['{p1}, loop een rondje door de kamer op één been. Val je om? Dan moet je {punish}.'],['{p1}, hop a lap around the room on one leg. If you fall, you have to {punish}.']),
+    C('challenge',['{p1}, verstop iets van {p2} in de kamer. Vindt {p2} het binnen een minuut? Dan moet {p1} {punish}.'],['{p1}, hide something of {p2}’s in the room. If {p2} finds it within a minute, {p1} has to {punish}.']),
+    C('duel',['{p1} tegen {p2}: wie haalt als eerste iets roods uit een andere kamer? De verliezer moet {punish}.'],['{p1} vs {p2}: first to grab something red from another room wins. Loser has to {punish}.']),
+    C('vote',['Wie gaat vanavond als eerste naar huis? Wie de meeste stemmen krijgt, moet {punish}.'],['Who’ll go home first tonight? Most votes has to {punish}.']),
+    C('everyone',['Iedereen die hier niet woont, moet {punish}.'],['Everyone who doesn’t live here has to {punish}.']),
+    C('rule',['{p1} is de DJ en kiest elk nummer. Wie over de muziek klaagt, moet {punish}.','{p1} is geen DJ meer.'],['{p1} is the DJ and picks every song. Anyone who complains has to {punish}.','{p1} is no longer the DJ.'])
+  ]
+};
+
+const DEFAULT_DARES = [
+  {nl:'10 squats doen', en:'do 10 squats'},
+  {nl:'20 seconden planken', en:'hold a plank for 20 seconds'},
+  {nl:'tot je volgende kaart met een accent praten', en:'talk in an accent until your next card'},
+  {nl:'een refrein zingen dat de groep kiest', en:'sing a chorus the group picks'},
+  {nl:'een catwalk door de ruimte lopen', en:'do a runway walk across the room'},
+  {nl:'tot je volgende kaart alleen in vragen praten', en:'speak only in questions until your next card'},
+  {nl:'een bekend persoon imiteren die de groep kiest', en:'do an impression of a celebrity the group picks'},
+  {nl:'de groep je telefoonachtergrond laten kiezen voor vanavond', en:'let the group choose your phone wallpaper for tonight'},
+  {nl:'de 5e persoon in je contacten „Ik mis je” appen', en:'text the 5th person in your contacts “I miss you”'},
+  {nl:'je beste dansmove laten zien', en:'show off your best dance move'}
+];
+
+/* ---------- state ---------- */
+const STORE = 'krater:v1';
+let S = {lang:'nl', where:'soos', players:[], packs:{warmup:true, wild:false, custom:true}, pun:'mix', len:40, custom:[], dares:DEFAULT_DARES.map(d=>({...d}))};
+try { const saved = JSON.parse(localStorage.getItem(STORE)); if (saved) S = Object.assign(S, saved); } catch(e) {}
+function save(){ try { localStorage.setItem(STORE, JSON.stringify(S)); } catch(e) {} }
+
+const $ = id => document.getElementById(id);
+const t = k => T[S.lang][k];
+const rand = (a,b) => a + Math.floor(Math.random()*(b-a+1));
+const pick = arr => arr[Math.floor(Math.random()*arr.length)];
+const shuffle = arr => { const a = arr.slice(); for (let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+function el(tag, props={}, kids=[]){ const e=document.createElement(tag); Object.assign(e, props); kids.forEach(k=>e.append(k)); return e; }
+const dareText = d => typeof d === 'string' ? d : d[S.lang];
+
+/* ---------- render ---------- */
+function applyLang(){
+  document.documentElement.lang = S.lang;
+  document.querySelectorAll('[data-t]').forEach(n=>{
+    if (n.dataset.html) n.innerHTML = t(n.dataset.t); else n.textContent = t(n.dataset.t);
+  });
+  document.querySelectorAll('[data-ph]').forEach(n=>{ n.placeholder = t(n.dataset.ph); });
+  $('lang').textContent = t('other');
+  renderAll();
+}
+function renderAll(){ renderWhere(); renderPlayers(); renderPacks(); renderSegs(); renderCustom(); renderDares(); }
+
+function renderWhere(){
+  $('where').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.v===S.where)));
+  $('wherehint').textContent = t('whereHint_'+S.where);
+}
+$('where').onclick = e => { const b=e.target.closest('button'); if(!b) return; S.where=b.dataset.v; save(); renderWhere(); };
+
+function renderPlayers(){
+  const box=$('players'); box.innerHTML='';
+  S.players.forEach((p,i)=>{
+    const x=el('button',{textContent:'×',ariaLabel:'× '+p,onclick:()=>{S.players.splice(i,1);save();renderPlayers();}});
+    box.append(el('span',{className:'chip'},[p,x]));
+  });
+  $('phint').hidden = S.players.length >= 2;
+  $('start').disabled = S.players.length < 2;
+}
+function addPlayer(){
+  const v=$('pname').value.trim(); if(!v) return;
+  if (!S.players.includes(v)) S.players.push(v);
+  $('pname').value=''; $('pname').focus(); save(); renderPlayers();
+}
+$('padd').onclick = addPlayer;
+$('pname').addEventListener('keydown', e => { if (e.key==='Enter') addPlayer(); });
+
+function renderPacks(){
+  const box=$('packs'); box.innerHTML='';
+  const n=S.custom.length;
+  const items=[...Object.entries(PACKS).map(([k,p])=>[k,p.name[S.lang],`${p.desc[S.lang]} (${t('cardsCount')(p.cards.length)})`]),
+    ['custom', t('customName'), n ? t('customDesc')(n) : t('customEmpty')]];
+  items.forEach(([k,name,desc])=>{
+    const cb=el('input',{type:'checkbox',checked:!!S.packs[k],onchange:e=>{S.packs[k]=e.target.checked;save();}});
+    box.append(el('label',{className:'pack'},[cb, el('div',{},[el('b',{textContent:name}), el('small',{textContent:desc})])]));
+  });
+}
+
+function renderSegs(){
+  $('pun').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.v===S.pun)));
+  $('len').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed', String(Number(b.dataset.v)===S.len)));
+  $('punhint').textContent = t('punHint_'+S.pun);
+}
+$('pun').onclick = e => { const b=e.target.closest('button'); if(!b) return; S.pun=b.dataset.v; save(); renderSegs(); };
+$('len').onclick = e => { const b=e.target.closest('button'); if(!b) return; S.len=Number(b.dataset.v); save(); renderSegs(); };
+
+$('ctype').onchange = () => { $('cend').hidden = $('ctype').value !== 'rule'; };
+$('cadd').onclick = () => {
+  const text=$('ctext').value.trim(); if(!text) return;
+  const card={type:$('ctype').value, where:$('cwhere').value, text};
+  if (card.type==='rule') card.end = $('cend').value.trim() || (S.lang==='nl' ? 'Die regel is voorbij.' : 'That rule is over.');
+  S.custom.push(card); S.packs.custom=true;
+  $('ctext').value=''; $('cend').value='';
+  save(); renderCustom(); renderPacks();
+};
+function renderCustom(){
+  const ul=$('clist'); ul.innerHTML='';
+  $('ccount').textContent = S.custom.length ? `(${S.custom.length})` : '';
+  if (!S.custom.length) ul.append(el('li',{className:'empty',textContent:t('emptyCards')}));
+  S.custom.forEach((c,i)=>{
+    const dot=el('span',{className:'dot'}); dot.style.background=`var(--${c.type})`;
+    const del=el('button',{className:'del',textContent:'✕',ariaLabel:'✕',onclick:()=>{S.custom.splice(i,1);save();renderCustom();renderPacks();}});
+    const info=el('span',{},[c.text, el('small',{textContent:`${t('labels')[c.type]}, ${t('where')[c.where||'both']}`})]);
+    ul.append(el('li',{},[dot, info, del]));
+  });
+}
+
+$('dadd').onclick = () => { const v=$('dtext').value.trim(); if(!v) return; S.dares.push(v); $('dtext').value=''; save(); renderDares(); };
+$('dtext').addEventListener('keydown', e => { if (e.key==='Enter') $('dadd').click(); });
+$('dreset').onclick = () => { S.dares = DEFAULT_DARES.map(d=>({...d})); save(); renderDares(); };
+function renderDares(){
+  const ul=$('dlist'); ul.innerHTML='';
+  $('dcount').textContent = `(${S.dares.length})`;
+  if (!S.dares.length) ul.append(el('li',{className:'empty',textContent:t('emptyDares')}));
+  S.dares.forEach((d,i)=>{
+    const del=el('button',{className:'del',textContent:'✕',ariaLabel:'✕',onclick:()=>{S.dares.splice(i,1);save();renderDares();}});
+    ul.append(el('li',{},[el('span',{textContent:dareText(d)}), del]));
+  });
+}
+
+$('lang').onclick = () => { S.lang = S.lang==='nl' ? 'en' : 'nl'; save(); applyLang(); };
+
+/* ---------- sharing ---------- */
+let toastTimer;
+function toast(msg){ const n=$('toast'); n.textContent=msg; n.classList.add('on'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>n.classList.remove('on'),2600); }
+
+function openDialog({title, text, link, yes, no, onYes}){
+  const d=$('dlg');
+  $('dlgTitle').textContent=title; $('dlgText').textContent=text;
+  $('dlgLink').hidden=!link; $('dlgLink').value=link||'';
+  $('dlgYes').textContent=yes; $('dlgNo').textContent=no;
+  $('dlgYes').onclick=()=>{ if(onYes && onYes()===false) return; d.close(); };
+  $('dlgNo').onclick=()=>d.close();
+  d.showModal();
+}
+
+const b64u = bytes => { let bin=''; bytes.forEach(b=>bin+=String.fromCharCode(b)); return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); };
+const unb64u = str => { let b=str.replace(/-/g,'+').replace(/_/g,'/'); while(b.length%4) b+='='; return Uint8Array.from(atob(b), c=>c.charCodeAt(0)); };
+
+async function packDeck(obj){
+  let data=new TextEncoder().encode(JSON.stringify(obj)), z='0';
+  if ('CompressionStream' in window){
+    try { data=new Uint8Array(await new Response(new Blob([data]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer()); z='1'; } catch(e){}
+  }
+  return z + b64u(data);
+}
+async function unpackDeck(code){
+  let data=unb64u(code.slice(1));
+  if (code[0]==='1') data=new Uint8Array(await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());
+  return JSON.parse(new TextDecoder().decode(data));
+}
+
+const TYPES=['challenge','duel','vote','everyone','rule'], WHERES=['both','soos','thuis'];
+const str = (v,max) => typeof v==='string' && v.trim() ? v.trim().slice(0,max) : null;
+function cleanDeck(o){
+  if (!o || o.v!==1 || !Array.isArray(o.c) || !Array.isArray(o.d)) throw new Error('bad');
+  const cards = o.c.slice(0,500).map(c=>{
+    if (!Array.isArray(c) || !TYPES.includes(c[0])) return null;
+    const text=str(c[2],500); if(!text) return null;
+    const card={type:c[0], where:WHERES.includes(c[1])?c[1]:'both', text};
+    if (card.type==='rule') card.end = str(c[3],300) || (S.lang==='nl'?'Die regel is voorbij.':'That rule is over.');
+    return card;
+  }).filter(Boolean);
+  const dares = o.d.slice(0,500).map(d=>str(d,140)).filter(Boolean);
+  return {name: str(o.n,40) || t('defaultDeckName'), cards, dares};
+}
+
+$('share').onclick = async () => {
+  const dares=S.dares.filter(d=>typeof d==='string');
+  if (!S.custom.length && !dares.length){ toast(t('nothingToShare')); return; }
+  const name=$('deckname').value.trim() || t('defaultDeckName');
+  const code=await packDeck({v:1, n:name, c:S.custom.map(c=>[c.type, c.where||'both', c.text, c.end||'']), d:dares});
+  const url=location.origin+location.pathname+'#deck='+code;
+  const text=t('shareText')(name);
+  if (navigator.share){
+    try { await navigator.share({title:'Krater', text, url}); return; }
+    catch(e){ if (e.name==='AbortError') return; }
+  }
+  openDialog({title:t('copyTitle'), text:t('copyText'), link:url, yes:t('copy'), no:t('close'), onYes:()=>{
+    const ta=$('dlgLink'); ta.select();
+    (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(()=>toast(t('copied')),()=>{ try{document.execCommand('copy'); toast(t('copied'));}catch(e){} });
+  }});
+};
+
+async function importCode(raw){
+  const m=String(raw).match(/deck=([A-Za-z0-9_-]+)/);
+  const code=m ? m[1] : String(raw).trim();
+  let deck;
+  try { deck=cleanDeck(await unpackDeck(code)); } catch(e){ toast(t('badDeck')); return; }
+  if (!deck.cards.length && !deck.dares.length){ toast(t('badDeck')); return; }
+  openDialog({title:t('importTitle')(deck.name), text:t('importSummary')(deck.cards.length, deck.dares.length), yes:t('addDeck'), no:t('cancel'), onYes:()=>{
+    const haveC=new Set(S.custom.map(c=>c.type+'|'+c.text));
+    const haveD=new Set(S.dares.map(dareText).concat(S.dares.filter(d=>typeof d!=='string').flatMap(d=>[d.nl,d.en])));
+    let nc=0, nd=0;
+    deck.cards.forEach(c=>{ if(!haveC.has(c.type+'|'+c.text)){ S.custom.push(c); haveC.add(c.type+'|'+c.text); nc++; } });
+    deck.dares.forEach(d=>{ if(!haveD.has(d)){ S.dares.push(d); haveD.add(d); nd++; } });
+    if (nc) S.packs.custom=true;
+    save(); renderAll(); toast(t('added')(nc,nd)); $('importcode').value='';
+  }});
+}
+$('importbtn').onclick = () => { const v=$('importcode').value.trim(); if (v) importCode(v); };
+function handleHash(){
+  if (!location.hash.startsWith('#deck=')) return;
+  const code=location.hash.slice(6);
+  history.replaceState(null,'',location.pathname+location.search);
+  importCode(code);
+}
+window.addEventListener('load', handleHash);
+window.addEventListener('hashchange', handleHash);
+
+/* ---------- game ---------- */
+function punishment(){
+  const sips = () => t('sip')(rand(1,4));
+  if (S.pun==='sips' || !S.dares.length) return sips();
+  if (S.pun==='dares') return dareText(pick(S.dares));
+  return Math.random()<.5 ? sips() : dareText(pick(S.dares));
+}
+function normalize(card){
+  if (card.text) return {type:card.type, text:card.text, end:card.end||null};
+  const [text,end] = card[S.lang];
+  return {type:card.type, text, end:end||null};
+}
+function resolve(card){
+  const ps=shuffle(S.players);
+  const map={1:ps[0], 2:ps[1]||ps[0], 3:ps[2]||ps[1]||ps[0]};
+  const fill = s => s.replace(/\{punish\}/g, ()=>punishment())
+                     .replace(/\{n\}/g, ()=>rand(1,4))
+                     .replace(/\{p([123])\}/g, (m,d)=>map[d]);
+  const cap = s => s.charAt(0).toUpperCase()+s.slice(1);
+  return {type:card.type, text:cap(fill(card.text)), end: card.end ? cap(fill(card.end)) : null};
+}
+function buildDeck(){
+  let pool=[];
+  Object.keys(PACKS).forEach(k=>{ if (S.packs[k]) pool.push(...PACKS[k].cards); });
+  if (S.packs.custom) pool.push(...S.custom.filter(c=>!c.where || c.where==='both' || c.where===S.where));
+  if (!pool.length) return null;
+  pool.push(...MODE_CARDS[S.where]);
+  pool = pool.map(normalize);
+  let raw=[]; while (raw.length < S.len) raw.push(...shuffle(pool));
+  raw = raw.slice(0, S.len);
+  const out=[], pending=[];
+  raw.forEach(c=>{
+    const r=resolve(c); out.push(r);
+    pending.forEach(p=>p.left--);
+    for (let i=pending.length-1;i>=0;i--) if (pending[i].left<=0){ out.push(pending[i].card); pending.splice(i,1); }
+    if (r.end) pending.push({left:rand(4,8), card:{type:'end', text:r.end}});
+  });
+  pending.forEach(p=>out.push(p.card));
+  return out;
+}
+
+let deck=[], idx=0;
+function show(){
+  const done = idx>=deck.length;
+  const type = done ? 'end' : deck[idx].type;
+  $('game').style.setProperty('--c', `var(--${type})`);
+  $('kind').textContent = done ? t('over') : t('labels')[type];
+  $('text').textContent = done ? t('overText') : deck[idx].text;
+  $('count').textContent = done ? '' : `${idx+1} / ${deck.length}`;
+  $('endbtns').hidden = !done; $('tap').hidden = done;
+  $('back').style.visibility = idx>0 ? 'visible' : 'hidden';
+  const c=$('card'); c.classList.remove('flip'); void c.offsetWidth; c.classList.add('flip');
+}
+function start(){
+  deck = buildDeck();
+  if (!deck){ alert(t('noDeck')); return; }
+  idx=0; $('game').classList.add('on'); document.body.style.overflow='hidden'; show(); $('card').focus();
+}
+function quit(){ $('game').classList.remove('on'); document.body.style.overflow=''; }
+function next(){ if (idx<deck.length){ idx++; show(); } }
+$('start').onclick = start;
+$('card').onclick = e => { if (e.target.closest('.endbtns')) return; next(); };
+$('back').onclick = () => { if (idx>0){ idx--; show(); } };
+$('quit').onclick = () => { if (idx>=deck.length || confirm(t('confirmQuit'))) quit(); };
+$('again').onclick = start;
+$('tosetup').onclick = quit;
+document.addEventListener('keydown', e => {
+  if (!$('game').classList.contains('on')) return;
+  if (e.key===' ' || e.key==='ArrowRight' || e.key==='Enter'){ e.preventDefault(); next(); }
+  if (e.key==='ArrowLeft') $('back').click();
+  if (e.key==='Escape') $('quit').click();
+});
+
+applyLang();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
+}
+</script>
+</body>
+</html>
