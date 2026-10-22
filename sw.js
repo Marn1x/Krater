@@ -1,5 +1,5 @@
 // Bump this version every time you change a file.
-const CACHE = 'krater-v4';
+const CACHE = 'krater-v5';
 const FILES = [
   './',
   './index.html',

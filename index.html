@@ -30,15 +30,16 @@ body{margin:0;background:var(--bg);color:var(--ink);
   font-size:17px;line-height:1.45;-webkit-tap-highlight-color:transparent}
 button,input,select,textarea{font:inherit;color:inherit}
 :focus-visible{outline:3px solid #8FB0FF;outline-offset:2px}
+[hidden]{display:none!important}
 
 .wrap{max-width:540px;margin:0 auto;padding:22px 18px 56px}
 .top{display:flex;justify-content:flex-end}
 .lang{border:2px solid var(--line);background:transparent;border-radius:999px;padding:6px 14px;font-weight:600;cursor:pointer;color:var(--muted)}
 .logo{font-weight:800;font-size:clamp(3.4rem,17vw,5rem);line-height:.9;letter-spacing:-.05em;margin:10px 0 32px}
-.tag{color:var(--muted);margin:10px 0 28px}
 
 section{margin-bottom:28px}
 h2{font-size:1.25rem;font-weight:800;letter-spacing:-.02em;margin:0 0 10px}
+.sub{font-size:1rem;font-weight:600;color:var(--muted);margin:16px 0 8px}
 .hint{color:var(--muted);font-size:.9rem;margin:8px 0 0}
 
 .row{display:flex;gap:8px}
@@ -49,6 +50,9 @@ input:focus,textarea:focus,select:focus{border-color:var(--ink);outline:none}
 
 .btn{border:0;border-radius:14px;padding:12px 18px;font-weight:600;cursor:pointer;background:var(--surface2);color:var(--ink);white-space:nowrap}
 .btn.ghost{background:transparent;border:2px solid var(--line)}
+.btn.primary{background:var(--accent)}
+.btn.small{padding:8px 14px;font-size:.92rem}
+.btn.danger{background:transparent;border:2px solid #B4505A;color:#FFB3B9}
 .btn.big{width:100%;padding:18px;font-size:1.3rem;font-weight:800;background:var(--accent);border-radius:20px;box-shadow:0 6px 0 #22408F}
 .btn.big:active{transform:translateY(4px);box-shadow:0 2px 0 #22408F}
 .btn:disabled{opacity:.4;cursor:not-allowed}
@@ -66,28 +70,34 @@ input:focus,textarea:focus,select:focus{border-color:var(--ink);outline:none}
 .seg button[aria-pressed=true]{background:var(--surface2);color:var(--ink)}
 
 .packs{display:grid;gap:8px}
-.pack{display:flex;align-items:center;gap:12px;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:12px 14px;cursor:pointer}
-.pack input{width:22px;height:22px;accent-color:var(--accent)}
-.pack b{display:block}
+.pack{display:flex;align-items:center;gap:12px;background:var(--surface);border:2px solid var(--line);border-radius:16px;padding:12px 14px}
+.pack.dim{opacity:.4}
+.pack.on{border-color:var(--accent)}
+.packlabel{display:flex;align-items:center;gap:12px;flex:1;cursor:pointer;min-width:0}
+.pack input{width:22px;height:22px;accent-color:var(--accent);flex:none}
+.pack b{display:block;overflow-wrap:anywhere}
 .pack small{color:var(--muted)}
+.split{display:grid;gap:8px;padding-top:16px;margin-top:16px;border-top:1px solid var(--line)}
 
-details{background:var(--surface);border:2px solid var(--line);border-radius:18px;padding:4px 16px;margin-bottom:12px}
-summary{cursor:pointer;font-weight:800;padding:12px 0;list-style:none;display:flex;justify-content:space-between}
-summary::-webkit-details-marker{display:none}
-summary::after{content:"+";font-size:1.3rem;line-height:1}
-details[open] summary::after{content:"–"}
-.list{list-style:none;padding:0;margin:12px 0}
-.list li{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--line)}
-.list li span{flex:1}
+.list{list-style:none;padding:0;margin:12px 0 0}
+.list li{display:flex;gap:10px;align-items:flex-start;padding:10px 8px;border-top:1px solid var(--line);border-radius:10px}
+.list li.editing{background:var(--surface2)}
+.list li .grow{flex:1;overflow-wrap:anywhere}
+.list .tapedit{cursor:pointer}
 .list small{display:block;color:var(--muted)}
 .list .del{border:0;background:none;color:var(--muted);cursor:pointer;font-size:1.1rem;padding:0 4px}
 .dot{width:12px;height:12px;border-radius:50%;margin-top:6px;flex:none;border:1px solid #ffffff55}
-.stack{display:grid;gap:8px;padding-bottom:14px}
-code{background:var(--bg);padding:1px 6px;border-radius:6px;font-size:.88em}
+.stack{display:grid;gap:8px}
+code{background:var(--surface);padding:1px 6px;border-radius:6px;font-size:.88em}
 .empty{color:var(--muted);font-size:.95rem}
 
-.split{display:grid;gap:8px;padding-top:14px;border-top:1px solid var(--line)}
-.btn.primary{background:var(--accent)}
+#editor{position:fixed;inset:0;overflow-y:auto;background:var(--bg);display:none;z-index:5;
+  padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+#editor.on{display:block}
+.ehead{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:14px}
+.ehead span{color:var(--muted);font-weight:600}
+.ename{font-size:1.6rem!important;font-weight:800;letter-spacing:-.02em;margin-bottom:28px}
+
 dialog{background:var(--surface);color:var(--ink);border:2px solid var(--line);border-radius:22px;padding:22px;width:min(92vw,440px)}
 dialog::backdrop{background:#05080FCC}
 dialog h3{margin:0 0 8px;font-size:1.35rem;font-weight:800;letter-spacing:-.02em}
@@ -97,16 +107,16 @@ dialog textarea{min-height:110px;font-size:.85rem;margin-bottom:14px;word-break:
 .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);transform:translate(-50%,20px);opacity:0;
   background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:14px;font-weight:600;pointer-events:none;transition:.25s;z-index:20;max-width:90vw}
 .toast.on{opacity:1;transform:translate(-50%,0)}
-#game{position:fixed;inset:0;display:none;flex-direction:column;
+
+#game{position:fixed;inset:0;display:none;flex-direction:column;z-index:6;
   padding:calc(env(safe-area-inset-top,0px) + 14px) 18px calc(env(safe-area-inset-bottom,0px) + 18px);
   background:var(--c);color:#fff;transition:background .35s ease}
 #game.on{display:flex}
 .bar{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .bar button{border:2px solid #ffffff99;background:transparent;color:inherit;border-radius:999px;padding:8px 14px;font-weight:600;cursor:pointer}
-.count{font-weight:600;opacity:.75}
 .bar .cog{width:42px;height:42px;padding:0;display:grid;place-items:center;border-color:#ffffff66}
 .bar .cog svg{width:22px;height:22px}
-.pack.dim{opacity:.4}
+.count{font-weight:600;opacity:.75}
 .card{flex:1;display:flex;flex-direction:column;justify-content:center;max-width:620px;width:100%;margin:0 auto;cursor:pointer;user-select:none}
 .kind{font-weight:800;font-size:1.1rem;opacity:.75;margin-bottom:14px}
 .text{font-weight:800;font-size:clamp(1.8rem,7.5vw,3rem);line-height:1.08;letter-spacing:-.025em;margin:0}
@@ -114,9 +124,6 @@ dialog textarea{min-height:110px;font-size:.85rem;margin-bottom:14px;word-break:
 .card.flip{animation:flip .28s ease}
 @keyframes flip{from{opacity:0;transform:translateY(14px) rotate(-1.5deg)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.card.flip{animation:none}#game{transition:none}}
-.endbtns{display:grid;gap:10px;margin-top:28px}
-.endbtns button{border:0;border-radius:16px;padding:16px;font-weight:800;font-size:1.1rem;cursor:pointer;background:#fff;color:var(--bg)}
-.endbtns button.alt{background:transparent;color:#fff;border:2px solid #fff}
 </style>
 </head>
 <body>
@@ -145,7 +152,19 @@ dialog textarea{min-height:110px;font-size:.85rem;margin-bottom:14px;word-break:
 
   <section>
     <h2 data-t="decks"></h2>
-    <div class="packs" id="packs"></div>
+    <h3 class="sub" data-t="standardH"></h3>
+    <div class="packs" id="stdpacks"></div>
+    <h3 class="sub" data-t="ownH"></h3>
+    <div class="packs" id="owndecks"></div>
+    <p class="hint" id="customhint" data-t="customOnly"></p>
+    <div class="row" style="margin-top:10px"><button class="btn" id="newdeck" data-t="newDeck"></button></div>
+    <div class="split">
+      <b data-t="importH"></b>
+      <div class="row">
+        <input type="text" id="importcode" data-ph="importPh" autocomplete="off">
+        <button class="btn" id="importbtn" data-t="importBtn"></button>
+      </div>
+    </div>
   </section>
 
   <section>
@@ -170,11 +189,18 @@ dialog textarea{min-height:110px;font-size:.85rem;margin-bottom:14px;word-break:
   <section>
     <button class="btn big" id="start" data-t="start"></button>
   </section>
+</main>
 
-  <section>
-    <h2 data-t="makeH"></h2>
-    <details>
-      <summary><span><span data-t="myCards"></span> <span id="ccount"></span></span></summary>
+<div id="editor" role="dialog" aria-labelledby="ename">
+  <div class="wrap">
+    <div class="ehead">
+      <span data-t="editDeck"></span>
+      <button class="btn primary" id="edone" data-t="done"></button>
+    </div>
+    <input type="text" id="ename" class="ename" maxlength="40" data-ph="deckName">
+
+    <section>
+      <h2><span data-t="cardsH"></span> <span id="ccount"></span></h2>
       <div class="stack">
         <select id="ctype">
           <option value="challenge" data-t="optChallenge"></option>
@@ -190,42 +216,46 @@ dialog textarea{min-height:110px;font-size:.85rem;margin-bottom:14px;word-break:
         </select>
         <textarea id="ctext" data-ph="ctextPh"></textarea>
         <input type="text" id="cend" data-ph="cendPh" hidden>
-        <button class="btn" id="cadd" data-t="addCard"></button>
+        <div class="row">
+          <button class="btn primary" id="cadd" style="flex:1"></button>
+          <button class="btn ghost" id="ccancel" data-t="cancel" hidden></button>
+        </div>
         <p class="hint" data-t="placeholders" data-html="1"></p>
       </div>
       <ul class="list" id="clist"></ul>
-    </details>
+      <p class="hint" id="tapedithint" data-t="tapToEdit"></p>
+    </section>
 
-    <details>
-      <summary><span><span data-t="myDares"></span> <span id="dcount"></span></span></summary>
-      <div class="stack">
-        <div class="row">
-          <input type="text" id="dtext" data-ph="dtextPh" maxlength="140">
-          <button class="btn" id="dadd" data-t="add"></button>
-        </div>
-        <p class="hint" data-t="dhint"></p>
+    <section>
+      <h2><span data-t="daresH"></span> <span id="dcount"></span></h2>
+      <div class="row">
+        <input type="text" id="dtext" data-ph="dtextPh" maxlength="140">
+        <button class="btn" id="dadd" data-t="add"></button>
       </div>
+      <p class="hint" data-t="dhint"></p>
       <ul class="list" id="dlist"></ul>
-      <div class="stack"><button class="btn ghost" id="dreset" data-t="dreset"></button></div>
-    </details>
+    </section>
 
-    <details>
-      <summary><span data-t="shareH"></span></summary>
-      <div class="stack">
-        <p class="hint" data-t="shareIntro" style="margin-top:0"></p>
-        <input type="text" id="deckname" data-ph="deckNamePh" maxlength="40">
-        <button class="btn primary" id="share" data-t="shareBtn"></button>
-        <div class="split">
-          <b data-t="importH"></b>
-          <div class="row">
-            <input type="text" id="importcode" data-ph="importPh" autocomplete="off">
-            <button class="btn" id="importbtn" data-t="importBtn"></button>
-          </div>
-        </div>
+    <section>
+      <h2 data-t="mergeH"></h2>
+      <p class="hint" data-t="mergeHint" style="margin:0 0 10px"></p>
+      <div class="row" id="mergerow">
+        <select id="mergesel"></select>
+        <button class="btn" id="mergebtn" data-t="mergeBtn"></button>
       </div>
-    </details>
-  </section>
-</main>
+      <p class="empty" id="mergenone" data-t="mergeNone"></p>
+    </section>
+
+    <section>
+      <h2 data-t="shareH"></h2>
+      <button class="btn primary" id="eshare" data-t="shareBtn"></button>
+    </section>
+
+    <section>
+      <button class="btn danger" id="edelete" data-t="deleteDeck"></button>
+    </section>
+  </div>
+</div>
 
 <dialog id="dlg">
   <h3 id="dlgTitle"></h3>
@@ -252,97 +282,102 @@ dialog textarea{min-height:110px;font-size:.85rem;margin-bottom:14px;word-break:
 </div>
 
 <script>
-/* ---------- text ---------- */
 const T = {
   nl: {
-    tag:'Geef de telefoon door, lees de kaart, doe wat er staat.',
     whereH:'Waar spelen jullie?',
     whereHint_soos:'Met extra kaarten voor op de soos.',
     whereHint_thuis:'Met extra kaarten voor thuis of ergens anders.',
     players:'Spelers', addName:'Voeg een naam toe', add:'Toevoegen', phint:'Voeg minstens 2 spelers toe.',
-    decks:'Decks', punishH:'Straffen', sips:'Slokken', dares:'Opdrachten', mix:'Mix',
+    decks:'Decks', standardH:'Standaard', ownH:'Eigen decks', newDeck:'+ Nieuw deck', edit:'Bewerken',
+    noDecks:'Nog geen eigen decks. Maak er een of importeer er een van een vriend.',
+    deckCounts:(c,d)=>`${c} kaart${c===1?'':'en'}, ${d} opdracht${d===1?'':'en'}`,
+    customOnly:'Alleen de gekozen eigen decks worden gebruikt. Kies er meerdere om ze samen te spelen.',
+    importH:'Deck van een vriend', importPh:'Plak de link of code', importBtn:'Importeren',
+    punishH:'Straffen', sips:'Slokken', dares:'Opdrachten', mix:'Mix',
     punHint_sips:'Straffen zijn slokken. Water telt ook.',
-    punHint_dares:'Straffen komen uit je lijst met opdrachten.',
+    punHint_dares:'Straffen zijn opdrachten.',
     punHint_mix:'Half slokken, half opdrachten.',
     lengthH:'Lengte', short:'Kort', normal:'Normaal', long:'Lang', start:'Start spel',
-    makeH:'Maak het je eigen', myCards:'Mijn kaarten',
+    editDeck:'Deck bewerken', done:'Klaar', deckName:'Naam van het deck', newDeckName:'Nieuw deck',
+    cardsH:'Kaarten', daresH:'Opdrachten',
     optChallenge:'Opdracht: één speler', optDuel:'Duel: twee spelers tegen elkaar',
     optVote:'Stemmen: de groep wijst iemand aan', optEveryone:'Iedereen: geldt voor de hele groep',
     optRule:'Regel: duurt een paar kaarten',
     bothModes:'Beide modi', soosOnly:'Alleen Soos', thuisOnly:'Alleen Niet op de soos',
     ctextPh:'{p1}, doe 10 seconden een robotdans, anders moet je {punish}.',
     cendPh:'Als de regel stopt, bijv. {p1} hoeft geen robot meer te zijn.',
-    addCard:'Kaart toevoegen',
+    addCard:'Kaart toevoegen', saveCard:'Kaart opslaan', cancel:'Annuleren', ruleOver:'Die regel is voorbij.',
     placeholders:'Gebruik <code>{p1}</code> <code>{p2}</code> <code>{p3}</code> voor willekeurige spelers, <code>{punish}</code> voor een straf en <code>{n}</code> voor een getal van 1 tot 4. Zet <code>{punish}</code> na „moet”, zoals: De verliezer moet {punish}.',
-    emptyCards:'Nog geen kaarten. Je eerste maak je hierboven.',
-    myDares:'Mijn opdrachten', dtextPh:'15 jumping jacks doen',
-    dhint:'Schrijf opdrachten zo dat ze de zin „De verliezer moet …” afmaken.',
-    emptyDares:'Geen opdrachten. De opdrachten-modus gebruikt dan slokken.',
-    dreset:'Standaardopdrachten terugzetten',
-    customName:'Mijn kaarten', customDesc:n=>`${n} zelfgemaakte kaart${n===1?'':'en'}`, customEmpty:'Maak hieronder je eigen kaarten',
-    cardsCount:n=>`${n} kaarten`,
-    quit:'Stoppen', back:'Terug', tap:'Tik voor de volgende kaart',
-    over:'Klaar', overText:'Dat was het hele deck.', settings:'Instellingen', keepPlaying:'Doorspelen', stop:'Stoppen',
-    confirmQuit:'Terug naar de instellingen? Dit spel stopt dan.', noDeck:'Kies minstens één deck met kaarten.',
-    noCustom:'Je hebt nog geen eigen kaarten voor deze modus. Maak ze onder „Mijn kaarten” of zet „Mijn kaarten” uit.',
-    customOnly:'Alleen je eigen kaarten en opdrachten worden gebruikt.',
-    shareH:'Deck delen', shareIntro:'Stuur je kaarten en opdrachten naar vrienden. Zij openen de link en kunnen alles aan hun eigen Krater toevoegen.',
-    deckNamePh:'Naam van je deck (optioneel)', shareBtn:'Deck delen', defaultDeckName:'Mijn Krater-deck',
-    importH:'Deck van een vriend', importPh:'Plak de link of code', importBtn:'Importeren',
-    shareText:n=>`Speel mijn Krater-deck „${n}”:`, nothingToShare:'Maak eerst een kaart of opdracht, dan kun je delen.',
+    emptyCards:'Nog geen kaarten. Je eerste maak je hierboven.', tapToEdit:'Tik op een kaart om hem te bewerken.',
+    dtextPh:'15 jumping jacks doen', dhint:'Schrijf opdrachten zo dat ze de zin „De verliezer moet …” afmaken.',
+    emptyDares:'Geen opdrachten. Straffen worden dan slokken.',
+    mergeH:'Ander deck toevoegen', mergeHint:'Kopieert alle kaarten en opdrachten van een ander deck naar dit deck. Het andere deck blijft bestaan.',
+    mergeBtn:'Toevoegen', mergeNone:'Je hebt geen andere eigen decks.',
+    merged:(c,d)=>`${c} kaart${c===1?'':'en'} en ${d} opdracht${d===1?'':'en'} toegevoegd.`,
+    shareH:'Delen', shareBtn:'Deel dit deck',
+    deleteDeck:'Deck verwijderen', deleteQ:n=>`„${n}” verwijderen?`, deleteText:'Dit kan niet ongedaan worden gemaakt.', delete:'Verwijderen',
+    shareText:n=>`Speel mijn Krater-deck „${n}”:`, nothingToShare:'Dit deck is nog leeg.',
     copyTitle:'Kopieer deze link', copyText:'Stuur hem naar je vrienden, bijvoorbeeld via WhatsApp.', copy:'Kopiëren', close:'Sluiten', copied:'Link gekopieerd.',
     importTitle:n=>`„${n}” toevoegen?`,
-    importSummary:(c,d)=>`${c} kaart${c===1?'':'en'} en ${d} opdracht${d===1?'':'en'}. Wat je al hebt, wordt overgeslagen.`,
-    addDeck:'Toevoegen', cancel:'Annuleren',
-    added:(c,d)=>`${c} kaart${c===1?'':'en'} en ${d} opdracht${d===1?'':'en'} toegevoegd.`,
+    importSummary:(c,d)=>`${c} kaart${c===1?'':'en'} en ${d} opdracht${d===1?'':'en'}. Het wordt een nieuw deck bij je eigen decks.`,
+    addDeck:'Toevoegen', added:n=>`Deck „${n}” toegevoegd.`,
     badDeck:'Deze link of code werkt niet. Vraag je vriend om het deck opnieuw te delen.',
+    defaultDeckName:'Mijn deck', cardsCount:n=>`${n} kaarten`,
+    back:'Terug', tap:'Tik voor de volgende kaart',
+    over:'Klaar', overText:'Dat was het hele deck.', settings:'Instellingen', keepPlaying:'Doorspelen', stop:'Stoppen',
+    confirmQuit:'Terug naar de instellingen? Dit spel stopt dan.',
+    noDeck:'Kies minstens één deck met kaarten.',
+    noCustom:'De gekozen decks hebben geen kaarten voor deze modus.',
     other:'English',
     sip:n=> n===1 ? '1 slok nemen' : `${n} slokken nemen`,
     labels:{challenge:'Opdracht', duel:'Duel', vote:'Stemmen', everyone:'Iedereen', rule:'Nieuwe regel', end:'Regel voorbij'},
     where:{both:'Beide modi', soos:'Soos', thuis:'Niet op de soos'}
   },
   en: {
-    tag:'Pass the phone, read the card, do the thing.',
     whereH:'Where are you playing?',
     whereHint_soos:'Includes extra cards for the soos.',
     whereHint_thuis:'Includes extra cards for home or anywhere else.',
     players:'Players', addName:'Add a name', add:'Add', phint:'Add at least 2 players.',
-    decks:'Decks', punishH:'Punishments', sips:'Sips', dares:'Dares', mix:'Mix',
+    decks:'Decks', standardH:'Standard', ownH:'Your decks', newDeck:'+ New deck', edit:'Edit',
+    noDecks:'No decks of your own yet. Make one or import one from a friend.',
+    deckCounts:(c,d)=>`${c} card${c===1?'':'s'}, ${d} dare${d===1?'':'s'}`,
+    customOnly:'Only your selected decks are used. Pick several to play them together.',
+    importH:'Deck from a friend', importPh:'Paste the link or code', importBtn:'Import',
+    punishH:'Punishments', sips:'Sips', dares:'Dares', mix:'Mix',
     punHint_sips:'Punishments are sips. Water counts too.',
-    punHint_dares:'Punishments come from your dare list.',
+    punHint_dares:'Punishments are dares.',
     punHint_mix:'Half sips, half dares.',
     lengthH:'Game length', short:'Short', normal:'Normal', long:'Long', start:'Start game',
-    makeH:'Make it yours', myCards:'My cards',
+    editDeck:'Edit deck', done:'Done', deckName:'Deck name', newDeckName:'New deck',
+    cardsH:'Cards', daresH:'Dares',
     optChallenge:'Challenge: one player', optDuel:'Duel: two players face off',
     optVote:'Vote: group points at someone', optEveryone:'Everyone: applies to the whole group',
     optRule:'Rule: lasts a few cards',
     bothModes:'Both modes', soosOnly:'Soos only', thuisOnly:'Niet op de soos only',
     ctextPh:'{p1}, do a robot dance for 10 seconds, or you have to {punish}.',
     cendPh:'When the rule ends, e.g. {p1} can stop being a robot.',
-    addCard:'Add card',
+    addCard:'Add card', saveCard:'Save card', cancel:'Cancel', ruleOver:'That rule is over.',
     placeholders:'Use <code>{p1}</code> <code>{p2}</code> <code>{p3}</code> for random players, <code>{punish}</code> for a punishment, and <code>{n}</code> for a number from 1 to 4. Put <code>{punish}</code> after “has to”, like: Loser has to {punish}.',
-    emptyCards:'No cards yet. Your first one goes above.',
-    myDares:'My dares', dtextPh:'do 15 jumping jacks',
-    dhint:'Write dares so they finish the sentence “Loser has to …”',
-    emptyDares:'No dares. Dare mode will fall back to sips.',
-    dreset:'Restore default dares',
-    customName:'My cards', customDesc:n=>`${n} card${n===1?'':'s'} you made`, customEmpty:'Make your own below',
-    cardsCount:n=>`${n} cards`,
-    quit:'Quit', back:'Back', tap:'Tap for the next card',
-    over:'Game over', overText:'That’s the whole deck.', settings:'Settings', keepPlaying:'Keep playing', stop:'Quit',
-    confirmQuit:'Back to settings? This ends the game.', noDeck:'Pick at least one deck that has cards in it.',
-    noCustom:'You don’t have any cards of your own for this mode yet. Make them under “My cards” or turn “My cards” off.',
-    customOnly:'Only your own cards and dares are used.',
-    shareH:'Share deck', shareIntro:'Send your cards and dares to friends. They open the link and can add everything to their own Krater.',
-    deckNamePh:'Deck name (optional)', shareBtn:'Share deck', defaultDeckName:'My Krater deck',
-    importH:'Deck from a friend', importPh:'Paste the link or code', importBtn:'Import',
-    shareText:n=>`Play my Krater deck “${n}”:`, nothingToShare:'Make a card or dare first, then you can share.',
+    emptyCards:'No cards yet. Your first one goes above.', tapToEdit:'Tap a card to edit it.',
+    dtextPh:'do 15 jumping jacks', dhint:'Write dares so they finish the sentence “Loser has to …”',
+    emptyDares:'No dares. Punishments will be sips.',
+    mergeH:'Add another deck', mergeHint:'Copies all cards and dares from another deck into this one. The other deck stays as it is.',
+    mergeBtn:'Add', mergeNone:'You have no other decks of your own.',
+    merged:(c,d)=>`Added ${c} card${c===1?'':'s'} and ${d} dare${d===1?'':'s'}.`,
+    shareH:'Share', shareBtn:'Share this deck',
+    deleteDeck:'Delete deck', deleteQ:n=>`Delete “${n}”?`, deleteText:'This can’t be undone.', delete:'Delete',
+    shareText:n=>`Play my Krater deck “${n}”:`, nothingToShare:'This deck is still empty.',
     copyTitle:'Copy this link', copyText:'Send it to your friends, for example on WhatsApp.', copy:'Copy', close:'Close', copied:'Link copied.',
     importTitle:n=>`Add “${n}”?`,
-    importSummary:(c,d)=>`${c} card${c===1?'':'s'} and ${d} dare${d===1?'':'s'}. Anything you already have is skipped.`,
-    addDeck:'Add', cancel:'Cancel',
-    added:(c,d)=>`Added ${c} card${c===1?'':'s'} and ${d} dare${d===1?'':'s'}.`,
+    importSummary:(c,d)=>`${c} card${c===1?'':'s'} and ${d} dare${d===1?'':'s'}. It’s added as a new deck under your decks.`,
+    addDeck:'Add', added:n=>`Added deck “${n}”.`,
     badDeck:'This link or code doesn’t work. Ask your friend to share the deck again.',
+    defaultDeckName:'My deck', cardsCount:n=>`${n} cards`,
+    back:'Back', tap:'Tap for the next card',
+    over:'Game over', overText:'That’s the whole deck.', settings:'Settings', keepPlaying:'Keep playing', stop:'Quit',
+    confirmQuit:'Back to settings? This ends the game.',
+    noDeck:'Pick at least one deck that has cards in it.',
+    noCustom:'The selected decks have no cards for this mode.',
     other:'Nederlands',
     sip:n=> `take ${n} sip${n===1?'':'s'}`,
     labels:{challenge:'Challenge', duel:'Duel', vote:'Vote', everyone:'Everyone', rule:'New rule', end:'Rule over'},
@@ -350,7 +385,6 @@ const T = {
   }
 };
 
-/* ---------- cards: [type, mode, [nl, nlEnd], [en, enEnd]] ---------- */
 const C = (type, nl, en) => ({type, nl, en});
 const PACKS = {
   warmup: { name:{nl:'Warm-up', en:'Warm-up'}, desc:{nl:'Makkelijke kaarten om op gang te komen', en:'Easy cards to get everyone going'}, cards:[
@@ -430,9 +464,26 @@ const DEFAULT_DARES = [
 
 /* ---------- state ---------- */
 const STORE = 'krater:v1';
-let S = {lang:'nl', where:'soos', players:[], packs:{warmup:true, wild:false, custom:false}, pun:'mix', len:40, custom:[], dares:DEFAULT_DARES.map(d=>({...d}))};
+function newId(){ return 'd' + Date.now().toString(36) + Math.random().toString(36).slice(2,6); }
+let S = {lang:'nl', where:'soos', players:[], packs:{warmup:true, wild:false}, sel:[], pun:'mix', len:40, decks:[]};
 try { const saved = JSON.parse(localStorage.getItem(STORE)); if (saved) S = Object.assign(S, saved); } catch(e) {}
 function save(){ try { localStorage.setItem(STORE, JSON.stringify(S)); } catch(e) {} }
+
+/* move cards from the old single "Mijn kaarten" list into a deck */
+if (!Array.isArray(S.decks)) S.decks = [];
+if (!Array.isArray(S.sel)) S.sel = [];
+if ('custom' in S || 'dares' in S) {
+  const cards = Array.isArray(S.custom) ? S.custom : [];
+  const dares = Array.isArray(S.dares) ? S.dares.filter(d=>typeof d==='string') : [];
+  if (cards.length || dares.length) {
+    const d = {id:newId(), name:S.lang==='en' ? 'My deck' : 'Mijn deck', cards, dares};
+    S.decks.push(d);
+    if (S.packs && S.packs.custom) S.sel = [d.id];
+  }
+  delete S.custom; delete S.dares; if (S.packs) delete S.packs.custom;
+  save();
+}
+S.sel = S.sel.filter(id => S.decks.some(d => d.id === id));
 
 const $ = id => document.getElementById(id);
 const t = k => T[S.lang][k];
@@ -440,20 +491,20 @@ const rand = (a,b) => a + Math.floor(Math.random()*(b-a+1));
 const pick = arr => arr[Math.floor(Math.random()*arr.length)];
 const shuffle = arr => { const a = arr.slice(); for (let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
 function el(tag, props={}, kids=[]){ const e=document.createElement(tag); Object.assign(e, props); kids.forEach(k=>e.append(k)); return e; }
-const dareText = d => typeof d === 'string' ? d : d[S.lang];
+const selDecks = () => S.decks.filter(d => S.sel.includes(d.id));
+const fitsMode = c => !c.where || c.where==='both' || c.where===S.where;
 
-/* ---------- render ---------- */
+/* ---------- setup screen ---------- */
 function applyLang(){
   document.documentElement.lang = S.lang;
-  document.querySelectorAll('[data-t]').forEach(n=>{
-    if (n.dataset.html) n.innerHTML = t(n.dataset.t); else n.textContent = t(n.dataset.t);
-  });
+  document.querySelectorAll('[data-t]').forEach(n=>{ if (n.dataset.html) n.innerHTML = t(n.dataset.t); else n.textContent = t(n.dataset.t); });
   document.querySelectorAll('[data-ph]').forEach(n=>{ n.placeholder = t(n.dataset.ph); });
   document.querySelectorAll('[data-ta]').forEach(n=>{ n.setAttribute('aria-label', t(n.dataset.ta)); n.title = t(n.dataset.ta); });
   $('lang').textContent = t('other');
-  renderAll();
+  $('cadd').textContent = t(editCard===null ? 'addCard' : 'saveCard');
+  renderWhere(); renderPlayers(); renderDecks(); renderSegs();
+  if (editId) renderEditor();
 }
-function renderAll(){ renderWhere(); renderPlayers(); renderPacks(); renderSegs(); renderCustom(); renderDares(); }
 
 function renderWhere(){
   $('where').querySelectorAll('button').forEach(b=>b.setAttribute('aria-pressed', String(b.dataset.v===S.where)));
@@ -478,17 +529,33 @@ function addPlayer(){
 $('padd').onclick = addPlayer;
 $('pname').addEventListener('keydown', e => { if (e.key==='Enter') addPlayer(); });
 
-function renderPacks(){
-  const box=$('packs'); box.innerHTML='';
-  const n=S.custom.length;
-  const items=[...Object.entries(PACKS).map(([k,p])=>[k,p.name[S.lang],`${p.desc[S.lang]} (${t('cardsCount')(p.cards.length)})`]),
-    ['custom', t('customName'), n ? t('customDesc')(n) : t('customEmpty')]];
-  items.forEach(([k,name,desc])=>{
-    const off = S.packs.custom && k!=='custom';
-    const cb=el('input',{type:'checkbox',checked:!!S.packs[k],disabled:off,onchange:e=>{S.packs[k]=e.target.checked;save();renderPacks();}});
-    box.append(el('label',{className:'pack'+(off?' dim':'')},[cb, el('div',{},[el('b',{textContent:name}), el('small',{textContent:desc})])]));
+function renderDecks(){
+  const custom = S.sel.length > 0;
+  const std=$('stdpacks'); std.innerHTML='';
+  Object.entries(PACKS).forEach(([k,p])=>{
+    const cb=el('input',{type:'checkbox',checked:!!S.packs[k],disabled:custom,onchange:e=>{S.packs[k]=e.target.checked;save();}});
+    std.append(el('label',{className:'pack packlabel'+(custom?' dim':'')},[cb, el('div',{},[el('b',{textContent:p.name[S.lang]}), el('small',{textContent:`${p.desc[S.lang]} (${t('cardsCount')(p.cards.length)})`})])]));
   });
-  if (S.packs.custom) box.append(el('p',{className:'hint',textContent:t('customOnly')}));
+  const own=$('owndecks'); own.innerHTML='';
+  if (!S.decks.length) own.append(el('p',{className:'hint',textContent:t('noDecks'),style:'margin:0'}));
+  S.decks.forEach(d=>{
+    const on = S.sel.includes(d.id);
+    const cb=el('input',{type:'checkbox',checked:on,onchange:e=>{ S.sel = e.target.checked ? [...S.sel, d.id] : S.sel.filter(x=>x!==d.id); save(); renderDecks(); }});
+    const lab=el('label',{className:'packlabel'},[cb, el('div',{},[el('b',{textContent:d.name}), el('small',{textContent:t('deckCounts')(d.cards.length,d.dares.length)})])]);
+    const eb=el('button',{className:'btn small',textContent:t('edit'),onclick:()=>openEditor(d.id)});
+    own.append(el('div',{className:'pack'+(on?' on':'')},[lab, eb]));
+  });
+  $('customhint').hidden = !custom;
+}
+$('newdeck').onclick = () => {
+  const d={id:newId(), name:uniqueName(t('newDeckName')), cards:[], dares:[]};
+  S.decks.push(d); save(); renderDecks(); openEditor(d.id, true);
+};
+function uniqueName(base){
+  const names=new Set(S.decks.map(d=>d.name));
+  if (!names.has(base)) return base;
+  let i=2; while (names.has(`${base} (${i})`)) i++;
+  return `${base} (${i})`;
 }
 
 function renderSegs(){
@@ -498,60 +565,122 @@ function renderSegs(){
 }
 $('pun').onclick = e => { const b=e.target.closest('button'); if(!b) return; S.pun=b.dataset.v; save(); renderSegs(); };
 $('len').onclick = e => { const b=e.target.closest('button'); if(!b) return; S.len=Number(b.dataset.v); save(); renderSegs(); };
-
-$('ctype').onchange = () => { $('cend').hidden = $('ctype').value !== 'rule'; };
-$('cadd').onclick = () => {
-  const text=$('ctext').value.trim(); if(!text) return;
-  const card={type:$('ctype').value, where:$('cwhere').value, text};
-  if (card.type==='rule') card.end = $('cend').value.trim() || (S.lang==='nl' ? 'Die regel is voorbij.' : 'That rule is over.');
-  S.custom.push(card);
-  $('ctext').value=''; $('cend').value='';
-  save(); renderCustom(); renderPacks();
-};
-function renderCustom(){
-  const ul=$('clist'); ul.innerHTML='';
-  $('ccount').textContent = S.custom.length ? `(${S.custom.length})` : '';
-  if (!S.custom.length) ul.append(el('li',{className:'empty',textContent:t('emptyCards')}));
-  S.custom.forEach((c,i)=>{
-    const dot=el('span',{className:'dot'}); dot.style.background=`var(--${c.type})`;
-    const del=el('button',{className:'del',textContent:'✕',ariaLabel:'✕',onclick:()=>{S.custom.splice(i,1);save();renderCustom();renderPacks();}});
-    const info=el('span',{},[c.text, el('small',{textContent:`${t('labels')[c.type]}, ${t('where')[c.where||'both']}`})]);
-    ul.append(el('li',{},[dot, info, del]));
-  });
-}
-
-$('dadd').onclick = () => { const v=$('dtext').value.trim(); if(!v) return; S.dares.push(v); $('dtext').value=''; save(); renderDares(); };
-$('dtext').addEventListener('keydown', e => { if (e.key==='Enter') $('dadd').click(); });
-$('dreset').onclick = () => { S.dares = DEFAULT_DARES.map(d=>({...d})); save(); renderDares(); };
-function renderDares(){
-  const ul=$('dlist'); ul.innerHTML='';
-  $('dcount').textContent = `(${S.dares.length})`;
-  if (!S.dares.length) ul.append(el('li',{className:'empty',textContent:t('emptyDares')}));
-  S.dares.forEach((d,i)=>{
-    const del=el('button',{className:'del',textContent:'✕',ariaLabel:'✕',onclick:()=>{S.dares.splice(i,1);save();renderDares();}});
-    ul.append(el('li',{},[el('span',{textContent:dareText(d)}), del]));
-  });
-}
-
 $('lang').onclick = () => { S.lang = S.lang==='nl' ? 'en' : 'nl'; save(); applyLang(); };
 
-/* ---------- sharing ---------- */
+/* ---------- deck editor ---------- */
+let editId=null, editCard=null;
+const curDeck = () => S.decks.find(d=>d.id===editId);
+
+function openEditor(id, isNew){
+  editId=id; resetCardForm();
+  $('editor').classList.add('on'); $('editor').scrollTop=0; document.body.style.overflow='hidden';
+  renderEditor();
+  if (isNew){ $('ename').focus(); $('ename').select(); }
+}
+function closeEditor(){
+  $('editor').classList.remove('on'); document.body.style.overflow=''; editId=null; renderDecks();
+}
+$('edone').onclick = closeEditor;
+$('ename').oninput = () => { const d=curDeck(); if (d){ d.name = $('ename').value.trim() || t('newDeckName'); save(); } };
+
+function renderEditor(){
+  const d=curDeck(); if(!d) return;
+  if (document.activeElement !== $('ename')) $('ename').value = d.name;
+
+  const ul=$('clist'); ul.innerHTML='';
+  $('ccount').textContent = `(${d.cards.length})`;
+  if (!d.cards.length) ul.append(el('li',{className:'empty',textContent:t('emptyCards')}));
+  d.cards.forEach((c,i)=>{
+    const dot=el('span',{className:'dot'}); dot.style.background=`var(--${c.type})`;
+    const info=el('span',{className:'grow tapedit',onclick:()=>editCardAt(i)},[c.text, el('small',{textContent:`${t('labels')[c.type]}, ${t('where')[c.where||'both']}`})]);
+    const del=el('button',{className:'del',textContent:'✕',ariaLabel:t('delete'),onclick:()=>{
+      d.cards.splice(i,1);
+      if (editCard===i) resetCardForm(); else if (editCard!==null && editCard>i) editCard--;
+      save(); renderEditor();
+    }});
+    ul.append(el('li',{className:editCard===i?'editing':''},[dot, info, del]));
+  });
+  $('tapedithint').hidden = !d.cards.length;
+
+  const dl=$('dlist'); dl.innerHTML='';
+  $('dcount').textContent = `(${d.dares.length})`;
+  if (!d.dares.length) dl.append(el('li',{className:'empty',textContent:t('emptyDares')}));
+  d.dares.forEach((x,i)=>{
+    const del=el('button',{className:'del',textContent:'✕',ariaLabel:t('delete'),onclick:()=>{ d.dares.splice(i,1); save(); renderEditor(); }});
+    dl.append(el('li',{},[el('span',{className:'grow',textContent:x}), del]));
+  });
+
+  const others=S.decks.filter(o=>o.id!==d.id);
+  const sel=$('mergesel'); sel.innerHTML='';
+  others.forEach(o=>sel.append(el('option',{value:o.id,textContent:`${o.name} (${t('deckCounts')(o.cards.length,o.dares.length)})`})));
+  $('mergerow').hidden = !others.length; $('mergenone').hidden = !!others.length;
+}
+
+function resetCardForm(){
+  editCard=null;
+  $('ctext').value=''; $('cend').value=''; $('ctype').value='challenge'; $('cwhere').value='both';
+  $('cend').hidden=true; $('cadd').textContent=t('addCard'); $('ccancel').hidden=true;
+}
+function editCardAt(i){
+  const c=curDeck().cards[i]; editCard=i;
+  $('ctype').value=c.type; $('cwhere').value=c.where||'both'; $('ctext').value=c.text; $('cend').value=c.end||'';
+  $('cend').hidden = c.type!=='rule'; $('cadd').textContent=t('saveCard'); $('ccancel').hidden=false;
+  renderEditor();
+  $('ctype').scrollIntoView({behavior:'smooth', block:'start'});
+}
+$('ctype').onchange = () => { $('cend').hidden = $('ctype').value !== 'rule'; };
+$('cadd').onclick = () => {
+  const d=curDeck(); const text=$('ctext').value.trim(); if(!d || !text) return;
+  const card={type:$('ctype').value, where:$('cwhere').value, text};
+  if (card.type==='rule') card.end = $('cend').value.trim() || t('ruleOver');
+  if (editCard!==null) d.cards[editCard]=card; else d.cards.push(card);
+  save(); resetCardForm(); renderEditor();
+};
+$('ccancel').onclick = () => { resetCardForm(); renderEditor(); };
+
+$('dadd').onclick = () => {
+  const d=curDeck(); const v=$('dtext').value.trim(); if(!d || !v) return;
+  if (!d.dares.includes(v)) d.dares.push(v);
+  $('dtext').value=''; save(); renderEditor();
+};
+$('dtext').addEventListener('keydown', e => { if (e.key==='Enter') $('dadd').click(); });
+
+function mergeInto(d, src){
+  const hc=new Set(d.cards.map(c=>c.type+'|'+c.text)), hd=new Set(d.dares);
+  let nc=0, nd=0;
+  src.cards.forEach(c=>{ const k=c.type+'|'+c.text; if(!hc.has(k)){ d.cards.push({...c}); hc.add(k); nc++; } });
+  src.dares.forEach(x=>{ if(!hd.has(x)){ d.dares.push(x); hd.add(x); nd++; } });
+  return [nc, nd];
+}
+$('mergebtn').onclick = () => {
+  const d=curDeck(), src=S.decks.find(o=>o.id===$('mergesel').value);
+  if (!d || !src) return;
+  const [nc,nd]=mergeInto(d, src); save(); renderEditor(); toast(t('merged')(nc,nd));
+};
+$('eshare').onclick = () => shareDeck(curDeck());
+$('edelete').onclick = () => {
+  const d=curDeck(); if(!d) return;
+  openDialog({title:t('deleteQ')(d.name), text:t('deleteText'), yes:t('delete'), no:t('cancel'), onYes:()=>{
+    S.decks=S.decks.filter(x=>x.id!==d.id); S.sel=S.sel.filter(x=>x!==d.id); save(); closeEditor();
+  }});
+};
+
+/* ---------- dialogs & toasts ---------- */
 let toastTimer;
 function toast(msg){ const n=$('toast'); n.textContent=msg; n.classList.add('on'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>n.classList.remove('on'),2600); }
-
 function openDialog({title, text, link, yes, no, onYes}){
   const d=$('dlg');
   $('dlgTitle').textContent=title; $('dlgText').textContent=text;
   $('dlgLink').hidden=!link; $('dlgLink').value=link||'';
   $('dlgYes').textContent=yes; $('dlgNo').textContent=no;
-  $('dlgYes').onclick=()=>{ if(onYes && onYes()===false) return; d.close(); };
+  $('dlgYes').onclick=()=>{ if (onYes && onYes()===false) return; d.close(); };
   $('dlgNo').onclick=()=>d.close();
   d.showModal();
 }
 
+/* ---------- sharing ---------- */
 const b64u = bytes => { let bin=''; bytes.forEach(b=>bin+=String.fromCharCode(b)); return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); };
 const unb64u = str => { let b=str.replace(/-/g,'+').replace(/_/g,'/'); while(b.length%4) b+='='; return Uint8Array.from(atob(b), c=>c.charCodeAt(0)); };
-
 async function packDeck(obj){
   let data=new TextEncoder().encode(JSON.stringify(obj)), z='0';
   if ('CompressionStream' in window){
@@ -564,7 +693,6 @@ async function unpackDeck(code){
   if (code[0]==='1') data=new Uint8Array(await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());
   return JSON.parse(new TextDecoder().decode(data));
 }
-
 const TYPES=['challenge','duel','vote','everyone','rule'], WHERES=['both','soos','thuis'];
 const str = (v,max) => typeof v==='string' && v.trim() ? v.trim().slice(0,max) : null;
 function cleanDeck(o){
@@ -573,29 +701,28 @@ function cleanDeck(o){
     if (!Array.isArray(c) || !TYPES.includes(c[0])) return null;
     const text=str(c[2],500); if(!text) return null;
     const card={type:c[0], where:WHERES.includes(c[1])?c[1]:'both', text};
-    if (card.type==='rule') card.end = str(c[3],300) || (S.lang==='nl'?'Die regel is voorbij.':'That rule is over.');
+    if (card.type==='rule') card.end = str(c[3],300) || t('ruleOver');
     return card;
   }).filter(Boolean);
-  const dares = o.d.slice(0,500).map(d=>str(d,140)).filter(Boolean);
+  const dares = [...new Set(o.d.slice(0,500).map(x=>str(x,140)).filter(Boolean))];
   return {name: str(o.n,40) || t('defaultDeckName'), cards, dares};
 }
 
-$('share').onclick = async () => {
-  const dares=S.dares.filter(d=>typeof d==='string');
-  if (!S.custom.length && !dares.length){ toast(t('nothingToShare')); return; }
-  const name=$('deckname').value.trim() || t('defaultDeckName');
-  const code=await packDeck({v:1, n:name, c:S.custom.map(c=>[c.type, c.where||'both', c.text, c.end||'']), d:dares});
+async function shareDeck(d){
+  if (!d) return;
+  if (!d.cards.length && !d.dares.length){ toast(t('nothingToShare')); return; }
+  const code=await packDeck({v:1, n:d.name, c:d.cards.map(c=>[c.type, c.where||'both', c.text, c.end||'']), d:d.dares});
   const url=location.origin+location.pathname+'#deck='+code;
-  const text=t('shareText')(name);
+  const text=t('shareText')(d.name);
   if (navigator.share){
     try { await navigator.share({title:'Krater', text, url}); return; }
     catch(e){ if (e.name==='AbortError') return; }
   }
   openDialog({title:t('copyTitle'), text:t('copyText'), link:url, yes:t('copy'), no:t('close'), onYes:()=>{
-    const ta=$('dlgLink'); ta.select();
-    (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(()=>toast(t('copied')),()=>{ try{document.execCommand('copy'); toast(t('copied'));}catch(e){} });
+    $('dlgLink').select();
+    (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(()=>toast(t('copied')),()=>{ try{ document.execCommand('copy'); toast(t('copied')); }catch(e){} });
   }});
-};
+}
 
 async function importCode(raw){
   const m=String(raw).match(/deck=([A-Za-z0-9_-]+)/);
@@ -604,12 +731,9 @@ async function importCode(raw){
   try { deck=cleanDeck(await unpackDeck(code)); } catch(e){ toast(t('badDeck')); return; }
   if (!deck.cards.length && !deck.dares.length){ toast(t('badDeck')); return; }
   openDialog({title:t('importTitle')(deck.name), text:t('importSummary')(deck.cards.length, deck.dares.length), yes:t('addDeck'), no:t('cancel'), onYes:()=>{
-    const haveC=new Set(S.custom.map(c=>c.type+'|'+c.text));
-    const haveD=new Set(S.dares.map(dareText).concat(S.dares.filter(d=>typeof d!=='string').flatMap(d=>[d.nl,d.en])));
-    let nc=0, nd=0;
-    deck.cards.forEach(c=>{ if(!haveC.has(c.type+'|'+c.text)){ S.custom.push(c); haveC.add(c.type+'|'+c.text); nc++; } });
-    deck.dares.forEach(d=>{ if(!haveD.has(d)){ S.dares.push(d); haveD.add(d); nd++; } });
-    save(); renderAll(); toast(t('added')(nc,nd)); $('importcode').value='';
+    const name=uniqueName(deck.name);
+    S.decks.push({id:newId(), name, cards:deck.cards, dares:deck.dares});
+    save(); renderDecks(); $('importcode').value=''; toast(t('added')(name));
   }});
 }
 $('importbtn').onclick = () => { const v=$('importcode').value.trim(); if (v) importCode(v); };
@@ -625,10 +749,10 @@ window.addEventListener('hashchange', handleHash);
 /* ---------- game ---------- */
 function punishment(){
   const sips = () => t('sip')(rand(1,4));
-  const dares = S.packs.custom ? S.dares.filter(d=>typeof d==='string') : S.dares;
+  const dares = S.sel.length ? selDecks().flatMap(d=>d.dares) : DEFAULT_DARES.map(x=>x[S.lang]);
   if (S.pun==='sips' || !dares.length) return sips();
-  if (S.pun==='dares') return dareText(pick(dares));
-  return Math.random()<.5 ? sips() : dareText(pick(dares));
+  if (S.pun==='dares') return pick(dares);
+  return Math.random()<.5 ? sips() : pick(dares);
 }
 function normalize(card){
   if (card.text) return {type:card.type, text:card.text, end:card.end||null};
@@ -646,8 +770,8 @@ function resolve(card){
 }
 function buildDeck(){
   let pool=[];
-  if (S.packs.custom){
-    pool = S.custom.filter(c=>!c.where || c.where==='both' || c.where===S.where);
+  if (S.sel.length){
+    pool = selDecks().flatMap(d=>d.cards).filter(fitsMode);
     if (!pool.length) return null;
   } else {
     Object.keys(PACKS).forEach(k=>{ if (S.packs[k]) pool.push(...PACKS[k].cards); });
@@ -682,7 +806,7 @@ function show(){
 }
 function start(){
   deck = buildDeck();
-  if (!deck){ toast(S.packs.custom ? t('noCustom') : t('noDeck')); return; }
+  if (!deck){ toast(S.sel.length ? t('noCustom') : t('noDeck')); return; }
   idx=0; $('game').classList.add('on'); document.body.style.overflow='hidden'; show(); $('card').focus();
 }
 function quit(){ $('game').classList.remove('on'); document.body.style.overflow=''; }
@@ -695,14 +819,13 @@ $('quit').onclick = () => {
   openDialog({title:t('settings'), text:t('confirmQuit'), yes:t('stop'), no:t('keepPlaying'), onYes:quit});
 };
 document.addEventListener('keydown', e => {
-  if (!$('game').classList.contains('on')) return;
+  if (!$('game').classList.contains('on') || $('dlg').open) return;
   if (e.key===' ' || e.key==='ArrowRight' || e.key==='Enter'){ e.preventDefault(); next(); }
   if (e.key==='ArrowLeft') $('back').click();
-  if (e.key==='Escape' && !$('dlg').open) $('quit').click();
+  if (e.key==='Escape') $('quit').click();
 });
 
 applyLang();
-
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(()=>{}));
 }
