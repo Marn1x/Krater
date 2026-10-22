@@ -1,5 +1,5 @@
-// Bump this version every time you change a file, so phones fetch the new version.
-const CACHE = 'krater-v1';
+// Bump this version every time you change a file.
+const CACHE = 'krater-v4';
 const FILES = [
   './',
   './index.html',
@@ -23,8 +23,24 @@ self.addEventListener('activate', e => {
   );
 });
 
-// Offline first: serve from cache, fall back to the network.
 self.addEventListener('fetch', e => {
-  if (e.request.method !== 'GET') return;
-  e.respondWith(caches.match(e.request, { ignoreSearch: true }).then(hit => hit || fetch(e.request)));
+  const req = e.request;
+  if (req.method !== 'GET') return;
+
+  // The app page itself: always try the internet first so updates show up right away,
+  // and fall back to the saved copy when offline.
+  if (req.mode === 'navigate') {
+    e.respondWith(
+      fetch(req)
+        .then(res => {
+          if (res.ok) { const copy = res.clone(); caches.open(CACHE).then(c => c.put('./index.html', copy)); }
+          return res;
+        })
+        .catch(() => caches.match('./index.html'))
+    );
+    return;
+  }
+
+  // Icons, font, manifest: saved copy first.
+  e.respondWith(caches.match(req, { ignoreSearch: true }).then(hit => hit || fetch(req)));
 });

@@ -86,6 +86,17 @@ details[open] summary::after{content:"–"}
 code{background:var(--bg);padding:1px 6px;border-radius:6px;font-size:.88em}
 .empty{color:var(--muted);font-size:.95rem}
 
+.split{display:grid;gap:8px;padding-top:14px;border-top:1px solid var(--line)}
+.btn.primary{background:var(--accent)}
+dialog{background:var(--surface);color:var(--ink);border:2px solid var(--line);border-radius:22px;padding:22px;width:min(92vw,440px)}
+dialog::backdrop{background:#05080FCC}
+dialog h3{margin:0 0 8px;font-size:1.35rem;font-weight:800;letter-spacing:-.02em}
+dialog p{margin:0 0 16px;color:var(--muted)}
+dialog textarea{min-height:110px;font-size:.85rem;margin-bottom:14px;word-break:break-all}
+.dlgbtns{display:flex;gap:8px;justify-content:flex-end}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);transform:translate(-50%,20px);opacity:0;
+  background:var(--ink);color:var(--bg);padding:12px 18px;border-radius:14px;font-weight:600;pointer-events:none;transition:.25s;z-index:20;max-width:90vw}
+.toast.on{opacity:1;transform:translate(-50%,0)}
 #game{position:fixed;inset:0;display:none;flex-direction:column;
   padding:calc(env(safe-area-inset-top,0px) + 14px) 18px calc(env(safe-area-inset-bottom,0px) + 18px);
   background:var(--c);color:#fff;transition:background .35s ease}
@@ -93,6 +104,9 @@ code{background:var(--bg);padding:1px 6px;border-radius:6px;font-size:.88em}
 .bar{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .bar button{border:2px solid #ffffff99;background:transparent;color:inherit;border-radius:999px;padding:8px 14px;font-weight:600;cursor:pointer}
 .count{font-weight:600;opacity:.75}
+.bar .cog{width:42px;height:42px;padding:0;display:grid;place-items:center;border-color:#ffffff66}
+.bar .cog svg{width:22px;height:22px}
+.pack.dim{opacity:.4}
 .card{flex:1;display:flex;flex-direction:column;justify-content:center;max-width:620px;width:100%;margin:0 auto;cursor:pointer;user-select:none}
 .kind{font-weight:800;font-size:1.1rem;opacity:.75;margin-bottom:14px}
 .text{font-weight:800;font-size:clamp(1.8rem,7.5vw,3rem);line-height:1.08;letter-spacing:-.025em;margin:0}
@@ -194,22 +208,45 @@ code{background:var(--bg);padding:1px 6px;border-radius:6px;font-size:.88em}
       <ul class="list" id="dlist"></ul>
       <div class="stack"><button class="btn ghost" id="dreset" data-t="dreset"></button></div>
     </details>
+
+    <details>
+      <summary><span data-t="shareH"></span></summary>
+      <div class="stack">
+        <p class="hint" data-t="shareIntro" style="margin-top:0"></p>
+        <input type="text" id="deckname" data-ph="deckNamePh" maxlength="40">
+        <button class="btn primary" id="share" data-t="shareBtn"></button>
+        <div class="split">
+          <b data-t="importH"></b>
+          <div class="row">
+            <input type="text" id="importcode" data-ph="importPh" autocomplete="off">
+            <button class="btn" id="importbtn" data-t="importBtn"></button>
+          </div>
+        </div>
+      </div>
+    </details>
   </section>
 </main>
 
+<dialog id="dlg">
+  <h3 id="dlgTitle"></h3>
+  <p id="dlgText"></p>
+  <textarea id="dlgLink" readonly hidden></textarea>
+  <div class="dlgbtns">
+    <button class="btn ghost" id="dlgNo"></button>
+    <button class="btn primary" id="dlgYes"></button>
+  </div>
+</dialog>
+<div class="toast" id="toast" role="status"></div>
+
 <div id="game" role="dialog" aria-label="Krater">
   <div class="bar">
-    <button id="quit" data-t="quit"></button>
+    <button id="quit" class="cog" data-ta="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
     <span class="count" id="count"></span>
     <button id="back" data-t="back"></button>
   </div>
   <div class="card" id="card" tabindex="0" aria-live="polite">
     <div class="kind" id="kind"></div>
     <p class="text" id="text"></p>
-    <div class="endbtns" id="endbtns" hidden>
-      <button id="again" data-t="again"></button>
-      <button class="alt" id="tosetup" data-t="toSetup"></button>
-    </div>
   </div>
   <p class="tap" id="tap" data-t="tap"></p>
 </div>
@@ -245,8 +282,20 @@ const T = {
     customName:'Mijn kaarten', customDesc:n=>`${n} zelfgemaakte kaart${n===1?'':'en'}`, customEmpty:'Maak hieronder je eigen kaarten',
     cardsCount:n=>`${n} kaarten`,
     quit:'Stoppen', back:'Terug', tap:'Tik voor de volgende kaart',
-    over:'Klaar', overText:'Dat was het hele deck. Nog een keer?', again:'Opnieuw spelen', toSetup:'Instellingen aanpassen',
-    confirmQuit:'Dit spel stoppen?', noDeck:'Kies minstens één deck met kaarten.',
+    over:'Klaar', overText:'Dat was het hele deck.', settings:'Instellingen', keepPlaying:'Doorspelen', stop:'Stoppen',
+    confirmQuit:'Terug naar de instellingen? Dit spel stopt dan.', noDeck:'Kies minstens één deck met kaarten.',
+    noCustom:'Je hebt nog geen eigen kaarten voor deze modus. Maak ze onder „Mijn kaarten” of zet „Mijn kaarten” uit.',
+    customOnly:'Alleen je eigen kaarten en opdrachten worden gebruikt.',
+    shareH:'Deck delen', shareIntro:'Stuur je kaarten en opdrachten naar vrienden. Zij openen de link en kunnen alles aan hun eigen Krater toevoegen.',
+    deckNamePh:'Naam van je deck (optioneel)', shareBtn:'Deck delen', defaultDeckName:'Mijn Krater-deck',
+    importH:'Deck van een vriend', importPh:'Plak de link of code', importBtn:'Importeren',
+    shareText:n=>`Speel mijn Krater-deck „${n}”:`, nothingToShare:'Maak eerst een kaart of opdracht, dan kun je delen.',
+    copyTitle:'Kopieer deze link', copyText:'Stuur hem naar je vrienden, bijvoorbeeld via WhatsApp.', copy:'Kopiëren', close:'Sluiten', copied:'Link gekopieerd.',
+    importTitle:n=>`„${n}” toevoegen?`,
+    importSummary:(c,d)=>`${c} kaart${c===1?'':'en'} en ${d} opdracht${d===1?'':'en'}. Wat je al hebt, wordt overgeslagen.`,
+    addDeck:'Toevoegen', cancel:'Annuleren',
+    added:(c,d)=>`${c} kaart${c===1?'':'en'} en ${d} opdracht${d===1?'':'en'} toegevoegd.`,
+    badDeck:'Deze link of code werkt niet. Vraag je vriend om het deck opnieuw te delen.',
     other:'English',
     sip:n=> n===1 ? '1 slok nemen' : `${n} slokken nemen`,
     labels:{challenge:'Opdracht', duel:'Duel', vote:'Stemmen', everyone:'Iedereen', rule:'Nieuwe regel', end:'Regel voorbij'},
@@ -280,8 +329,20 @@ const T = {
     customName:'My cards', customDesc:n=>`${n} card${n===1?'':'s'} you made`, customEmpty:'Make your own below',
     cardsCount:n=>`${n} cards`,
     quit:'Quit', back:'Back', tap:'Tap for the next card',
-    over:'Game over', overText:'That’s the whole deck. Same again?', again:'Play again', toSetup:'Change settings',
-    confirmQuit:'Quit this game?', noDeck:'Pick at least one deck that has cards in it.',
+    over:'Game over', overText:'That’s the whole deck.', settings:'Settings', keepPlaying:'Keep playing', stop:'Quit',
+    confirmQuit:'Back to settings? This ends the game.', noDeck:'Pick at least one deck that has cards in it.',
+    noCustom:'You don’t have any cards of your own for this mode yet. Make them under “My cards” or turn “My cards” off.',
+    customOnly:'Only your own cards and dares are used.',
+    shareH:'Share deck', shareIntro:'Send your cards and dares to friends. They open the link and can add everything to their own Krater.',
+    deckNamePh:'Deck name (optional)', shareBtn:'Share deck', defaultDeckName:'My Krater deck',
+    importH:'Deck from a friend', importPh:'Paste the link or code', importBtn:'Import',
+    shareText:n=>`Play my Krater deck “${n}”:`, nothingToShare:'Make a card or dare first, then you can share.',
+    copyTitle:'Copy this link', copyText:'Send it to your friends, for example on WhatsApp.', copy:'Copy', close:'Close', copied:'Link copied.',
+    importTitle:n=>`Add “${n}”?`,
+    importSummary:(c,d)=>`${c} card${c===1?'':'s'} and ${d} dare${d===1?'':'s'}. Anything you already have is skipped.`,
+    addDeck:'Add', cancel:'Cancel',
+    added:(c,d)=>`Added ${c} card${c===1?'':'s'} and ${d} dare${d===1?'':'s'}.`,
+    badDeck:'This link or code doesn’t work. Ask your friend to share the deck again.',
     other:'Nederlands',
     sip:n=> `take ${n} sip${n===1?'':'s'}`,
     labels:{challenge:'Challenge', duel:'Duel', vote:'Vote', everyone:'Everyone', rule:'New rule', end:'Rule over'},
@@ -369,7 +430,7 @@ const DEFAULT_DARES = [
 
 /* ---------- state ---------- */
 const STORE = 'krater:v1';
-let S = {lang:'nl', where:'soos', players:[], packs:{warmup:true, wild:false, custom:true}, pun:'mix', len:40, custom:[], dares:DEFAULT_DARES.map(d=>({...d}))};
+let S = {lang:'nl', where:'soos', players:[], packs:{warmup:true, wild:false, custom:false}, pun:'mix', len:40, custom:[], dares:DEFAULT_DARES.map(d=>({...d}))};
 try { const saved = JSON.parse(localStorage.getItem(STORE)); if (saved) S = Object.assign(S, saved); } catch(e) {}
 function save(){ try { localStorage.setItem(STORE, JSON.stringify(S)); } catch(e) {} }
 
@@ -388,6 +449,7 @@ function applyLang(){
     if (n.dataset.html) n.innerHTML = t(n.dataset.t); else n.textContent = t(n.dataset.t);
   });
   document.querySelectorAll('[data-ph]').forEach(n=>{ n.placeholder = t(n.dataset.ph); });
+  document.querySelectorAll('[data-ta]').forEach(n=>{ n.setAttribute('aria-label', t(n.dataset.ta)); n.title = t(n.dataset.ta); });
   $('lang').textContent = t('other');
   renderAll();
 }
@@ -422,9 +484,11 @@ function renderPacks(){
   const items=[...Object.entries(PACKS).map(([k,p])=>[k,p.name[S.lang],`${p.desc[S.lang]} (${t('cardsCount')(p.cards.length)})`]),
     ['custom', t('customName'), n ? t('customDesc')(n) : t('customEmpty')]];
   items.forEach(([k,name,desc])=>{
-    const cb=el('input',{type:'checkbox',checked:!!S.packs[k],onchange:e=>{S.packs[k]=e.target.checked;save();}});
-    box.append(el('label',{className:'pack'},[cb, el('div',{},[el('b',{textContent:name}), el('small',{textContent:desc})])]));
+    const off = S.packs.custom && k!=='custom';
+    const cb=el('input',{type:'checkbox',checked:!!S.packs[k],disabled:off,onchange:e=>{S.packs[k]=e.target.checked;save();renderPacks();}});
+    box.append(el('label',{className:'pack'+(off?' dim':'')},[cb, el('div',{},[el('b',{textContent:name}), el('small',{textContent:desc})])]));
   });
+  if (S.packs.custom) box.append(el('p',{className:'hint',textContent:t('customOnly')}));
 }
 
 function renderSegs(){
@@ -440,7 +504,7 @@ $('cadd').onclick = () => {
   const text=$('ctext').value.trim(); if(!text) return;
   const card={type:$('ctype').value, where:$('cwhere').value, text};
   if (card.type==='rule') card.end = $('cend').value.trim() || (S.lang==='nl' ? 'Die regel is voorbij.' : 'That rule is over.');
-  S.custom.push(card); S.packs.custom=true;
+  S.custom.push(card);
   $('ctext').value=''; $('cend').value='';
   save(); renderCustom(); renderPacks();
 };
@@ -471,12 +535,100 @@ function renderDares(){
 
 $('lang').onclick = () => { S.lang = S.lang==='nl' ? 'en' : 'nl'; save(); applyLang(); };
 
+/* ---------- sharing ---------- */
+let toastTimer;
+function toast(msg){ const n=$('toast'); n.textContent=msg; n.classList.add('on'); clearTimeout(toastTimer); toastTimer=setTimeout(()=>n.classList.remove('on'),2600); }
+
+function openDialog({title, text, link, yes, no, onYes}){
+  const d=$('dlg');
+  $('dlgTitle').textContent=title; $('dlgText').textContent=text;
+  $('dlgLink').hidden=!link; $('dlgLink').value=link||'';
+  $('dlgYes').textContent=yes; $('dlgNo').textContent=no;
+  $('dlgYes').onclick=()=>{ if(onYes && onYes()===false) return; d.close(); };
+  $('dlgNo').onclick=()=>d.close();
+  d.showModal();
+}
+
+const b64u = bytes => { let bin=''; bytes.forEach(b=>bin+=String.fromCharCode(b)); return btoa(bin).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); };
+const unb64u = str => { let b=str.replace(/-/g,'+').replace(/_/g,'/'); while(b.length%4) b+='='; return Uint8Array.from(atob(b), c=>c.charCodeAt(0)); };
+
+async function packDeck(obj){
+  let data=new TextEncoder().encode(JSON.stringify(obj)), z='0';
+  if ('CompressionStream' in window){
+    try { data=new Uint8Array(await new Response(new Blob([data]).stream().pipeThrough(new CompressionStream('deflate-raw'))).arrayBuffer()); z='1'; } catch(e){}
+  }
+  return z + b64u(data);
+}
+async function unpackDeck(code){
+  let data=unb64u(code.slice(1));
+  if (code[0]==='1') data=new Uint8Array(await new Response(new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());
+  return JSON.parse(new TextDecoder().decode(data));
+}
+
+const TYPES=['challenge','duel','vote','everyone','rule'], WHERES=['both','soos','thuis'];
+const str = (v,max) => typeof v==='string' && v.trim() ? v.trim().slice(0,max) : null;
+function cleanDeck(o){
+  if (!o || o.v!==1 || !Array.isArray(o.c) || !Array.isArray(o.d)) throw new Error('bad');
+  const cards = o.c.slice(0,500).map(c=>{
+    if (!Array.isArray(c) || !TYPES.includes(c[0])) return null;
+    const text=str(c[2],500); if(!text) return null;
+    const card={type:c[0], where:WHERES.includes(c[1])?c[1]:'both', text};
+    if (card.type==='rule') card.end = str(c[3],300) || (S.lang==='nl'?'Die regel is voorbij.':'That rule is over.');
+    return card;
+  }).filter(Boolean);
+  const dares = o.d.slice(0,500).map(d=>str(d,140)).filter(Boolean);
+  return {name: str(o.n,40) || t('defaultDeckName'), cards, dares};
+}
+
+$('share').onclick = async () => {
+  const dares=S.dares.filter(d=>typeof d==='string');
+  if (!S.custom.length && !dares.length){ toast(t('nothingToShare')); return; }
+  const name=$('deckname').value.trim() || t('defaultDeckName');
+  const code=await packDeck({v:1, n:name, c:S.custom.map(c=>[c.type, c.where||'both', c.text, c.end||'']), d:dares});
+  const url=location.origin+location.pathname+'#deck='+code;
+  const text=t('shareText')(name);
+  if (navigator.share){
+    try { await navigator.share({title:'Krater', text, url}); return; }
+    catch(e){ if (e.name==='AbortError') return; }
+  }
+  openDialog({title:t('copyTitle'), text:t('copyText'), link:url, yes:t('copy'), no:t('close'), onYes:()=>{
+    const ta=$('dlgLink'); ta.select();
+    (navigator.clipboard ? navigator.clipboard.writeText(url) : Promise.reject()).then(()=>toast(t('copied')),()=>{ try{document.execCommand('copy'); toast(t('copied'));}catch(e){} });
+  }});
+};
+
+async function importCode(raw){
+  const m=String(raw).match(/deck=([A-Za-z0-9_-]+)/);
+  const code=m ? m[1] : String(raw).trim();
+  let deck;
+  try { deck=cleanDeck(await unpackDeck(code)); } catch(e){ toast(t('badDeck')); return; }
+  if (!deck.cards.length && !deck.dares.length){ toast(t('badDeck')); return; }
+  openDialog({title:t('importTitle')(deck.name), text:t('importSummary')(deck.cards.length, deck.dares.length), yes:t('addDeck'), no:t('cancel'), onYes:()=>{
+    const haveC=new Set(S.custom.map(c=>c.type+'|'+c.text));
+    const haveD=new Set(S.dares.map(dareText).concat(S.dares.filter(d=>typeof d!=='string').flatMap(d=>[d.nl,d.en])));
+    let nc=0, nd=0;
+    deck.cards.forEach(c=>{ if(!haveC.has(c.type+'|'+c.text)){ S.custom.push(c); haveC.add(c.type+'|'+c.text); nc++; } });
+    deck.dares.forEach(d=>{ if(!haveD.has(d)){ S.dares.push(d); haveD.add(d); nd++; } });
+    save(); renderAll(); toast(t('added')(nc,nd)); $('importcode').value='';
+  }});
+}
+$('importbtn').onclick = () => { const v=$('importcode').value.trim(); if (v) importCode(v); };
+function handleHash(){
+  if (!location.hash.startsWith('#deck=')) return;
+  const code=location.hash.slice(6);
+  history.replaceState(null,'',location.pathname+location.search);
+  importCode(code);
+}
+window.addEventListener('load', handleHash);
+window.addEventListener('hashchange', handleHash);
+
 /* ---------- game ---------- */
 function punishment(){
   const sips = () => t('sip')(rand(1,4));
-  if (S.pun==='sips' || !S.dares.length) return sips();
-  if (S.pun==='dares') return dareText(pick(S.dares));
-  return Math.random()<.5 ? sips() : dareText(pick(S.dares));
+  const dares = S.packs.custom ? S.dares.filter(d=>typeof d==='string') : S.dares;
+  if (S.pun==='sips' || !dares.length) return sips();
+  if (S.pun==='dares') return dareText(pick(dares));
+  return Math.random()<.5 ? sips() : dareText(pick(dares));
 }
 function normalize(card){
   if (card.text) return {type:card.type, text:card.text, end:card.end||null};
@@ -494,10 +646,14 @@ function resolve(card){
 }
 function buildDeck(){
   let pool=[];
-  Object.keys(PACKS).forEach(k=>{ if (S.packs[k]) pool.push(...PACKS[k].cards); });
-  if (S.packs.custom) pool.push(...S.custom.filter(c=>!c.where || c.where==='both' || c.where===S.where));
-  if (!pool.length) return null;
-  pool.push(...MODE_CARDS[S.where]);
+  if (S.packs.custom){
+    pool = S.custom.filter(c=>!c.where || c.where==='both' || c.where===S.where);
+    if (!pool.length) return null;
+  } else {
+    Object.keys(PACKS).forEach(k=>{ if (S.packs[k]) pool.push(...PACKS[k].cards); });
+    if (!pool.length) return null;
+    pool.push(...MODE_CARDS[S.where]);
+  }
   pool = pool.map(normalize);
   let raw=[]; while (raw.length < S.len) raw.push(...shuffle(pool));
   raw = raw.slice(0, S.len);
@@ -520,28 +676,29 @@ function show(){
   $('kind').textContent = done ? t('over') : t('labels')[type];
   $('text').textContent = done ? t('overText') : deck[idx].text;
   $('count').textContent = done ? '' : `${idx+1} / ${deck.length}`;
-  $('endbtns').hidden = !done; $('tap').hidden = done;
+  $('tap').hidden = done;
   $('back').style.visibility = idx>0 ? 'visible' : 'hidden';
   const c=$('card'); c.classList.remove('flip'); void c.offsetWidth; c.classList.add('flip');
 }
 function start(){
   deck = buildDeck();
-  if (!deck){ alert(t('noDeck')); return; }
+  if (!deck){ toast(S.packs.custom ? t('noCustom') : t('noDeck')); return; }
   idx=0; $('game').classList.add('on'); document.body.style.overflow='hidden'; show(); $('card').focus();
 }
 function quit(){ $('game').classList.remove('on'); document.body.style.overflow=''; }
 function next(){ if (idx<deck.length){ idx++; show(); } }
 $('start').onclick = start;
-$('card').onclick = e => { if (e.target.closest('.endbtns')) return; next(); };
+$('card').onclick = next;
 $('back').onclick = () => { if (idx>0){ idx--; show(); } };
-$('quit').onclick = () => { if (idx>=deck.length || confirm(t('confirmQuit'))) quit(); };
-$('again').onclick = start;
-$('tosetup').onclick = quit;
+$('quit').onclick = () => {
+  if (idx>=deck.length) return quit();
+  openDialog({title:t('settings'), text:t('confirmQuit'), yes:t('stop'), no:t('keepPlaying'), onYes:quit});
+};
 document.addEventListener('keydown', e => {
   if (!$('game').classList.contains('on')) return;
   if (e.key===' ' || e.key==='ArrowRight' || e.key==='Enter'){ e.preventDefault(); next(); }
   if (e.key==='ArrowLeft') $('back').click();
-  if (e.key==='Escape') $('quit').click();
+  if (e.key==='Escape' && !$('dlg').open) $('quit').click();
 });
 
 applyLang();
